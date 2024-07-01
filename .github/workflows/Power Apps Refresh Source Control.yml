@@ -47,8 +47,8 @@ jobs:
     with:
       solutionName: AutomatedDeploymentExample
       checkParameterFile: false
-      serviceConnectionUrl: ${{ env.serviceConnectionUrl }}
-      applicationId:  ${{ env.applicationId }}
+      serviceConnectionUrl: "${{ env.serviceConnectionUrl }}"
+      applicationId:  "${{ env.applicationId }}"
     secrets: inherit
 
   # - ${{ if eq(parameters.refreshConfigurationData, true) }}:
