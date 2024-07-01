@@ -19,6 +19,7 @@ on:
         default: false
 
 jobs:
+
   export_vars:
     name: Export Variables to Output
     runs-on: ubuntu-latest
@@ -27,6 +28,9 @@ jobs:
       applicationId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
     steps:
       - run: echo "Exporting variables to outputs."
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
 
   Refresh-Source-Control-Steps:
     if: inputs.exportAutomatedDeploymentExample == true
