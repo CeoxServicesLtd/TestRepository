@@ -1,27 +1,27 @@
-# Unpack and Refresh Source Control
-trigger: none
+name: Power Apps Refresh Source Control
 
-parameters:
-- name: sourceConnectionName
-  displayName: 'Source Environment'
-  default: Power Platform Dev
-  values:
-  - Power Platform Dev
-- name: refreshConfigurationData
-  displayName: 'Refresh Configuration Data?'
-  type: boolean
-  default: false
-- name: exportAutomatedDeploymentExample
-  displayName: 'Refresh Automated Deployment Example Into Source Control?'
-  type: boolean
-  default: false
-- name: exportAutomatedDeploymentExample2
-  displayName: 'Refresh Automated Deployment Example 2 Into Source Control?'
-  type: boolean
-  default: false
+on:
+  workflow_dispatch:
+    inputs:
+      sourceConnectionName:
+        description: 'Source Environment'
+        default: 'Power Platform Dev'
+        type: choice
+        options:
+          - Power Platform Dev
+      refreshConfigurationData:
+        description: 'Refresh Configuration Data?'
+        type: boolean
+        default: false
+      exportAutomatedDeploymentExample:
+        description: 'Refresh Automated Deployment Example Into Source Control?'
+        type: boolean
+        default: false
 
-pool:
-  vmImage: 'windows-latest'
+jobs:
+  Refresh-Source-Control:
+    runs-on: windows-latest
+
 
 variables:
   - name: serviceConnectionUrl
