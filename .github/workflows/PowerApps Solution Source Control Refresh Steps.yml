@@ -20,6 +20,10 @@ jobs:
   PowerApps-Solution-Source-Control-Refresh-Steps:
     runs-on: windows-latest
     steps:
+
+    - uses: actions/checkout@v2
+      with:
+        lfs: true
     
     - name: powerplatform-actions             
       uses: microsoft/powerplatform-actions/actions-install@v1
