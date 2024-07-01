@@ -34,14 +34,15 @@ jobs:
          version: 1.0.0.0
          name: ${{ inputs.solutionName }}
 
-#steps:
-#  - task: PowerPlatformSetSolutionVersion@2
-#    displayName: "Set solution ${{ parameters.solutionName }} version to current build version"
-#    inputs:
-#      authenticationType: 'PowerPlatformSPN'
-#      PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
-#      SolutionName: '${{ parameters.solutionName }}'
-#      SolutionVersionNumber: '1.0.$(Build.BuildNumber)'#
+    - name: Export unmanaged version of solution 
+      uses: microsoft/powerplatform-actions/export-solution@v1
+      with:
+         environment-url: ${{ inputs.serviceConnectionUrl }}
+         app-id: ${{ inputs.applicationId }} 
+         client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
+         tenant-id: ${{ secrets.TENANTID }}
+         solution-name: ${{ inputs.solutionName }}
+         solution-output-file: ${{ github.workspace }}\${{ inputs.solutionName }}.zip
 
 #  - task: PowerPlatformExportSolution@2
 #    displayName: "Export unmanaged version of solution ${{ parameters.solutionName }}"
