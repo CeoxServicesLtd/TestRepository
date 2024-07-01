@@ -42,13 +42,13 @@ jobs:
         run: |
           Invoke-Expression -Command "pac auth create --url  ${{ env.serviceConnectionUrl }} --applicationId ${{ env.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
 
-      - ${{ if eq(parameters.exportAutomatedDeploymentExample, true) }}:
-        - name: Export Automated Deployment Example
-        - template: Templates/PowerApps Solution Source Control Refresh Steps.yml
-          parameters:
-            solutionName: 'AutomatedDeploymentExample'
-            checkParameterFile: false
-            sourceConnectionName: ${{ parameters.sourceConnectionName }}
+  Refresh-Source-Control-Steps:
+    if: inputs.exportAutomatedDeploymentExample == true
+    uses: CeoxServiceLtd/TestRepository/.github/workflows/PowerApps Solution Source Control Refresh Steps.yml@main
+    with:
+      solutionName: AutomatedDeploymentExample
+      checkParameterFile: false
+    secrets: inherit
 
   # - ${{ if eq(parameters.refreshConfigurationData, true) }}:
 #    - task: PowerPlatformExportData@2
