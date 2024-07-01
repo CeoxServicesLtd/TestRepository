@@ -79,10 +79,6 @@ jobs:
     - name: Unpack solution 
       uses: microsoft/powerplatform-actions/unpack-solution@v1
       with:
-         environment-url: ${{ inputs.serviceConnectionUrl }}
-         app-id: ${{ inputs.applicationId }} 
-         client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
-         tenant-id: ${{ secrets.TENANTID }}
          solution-type: both
          solution-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
          solution-folder:  ${{ github.workspace }}\Solutions\${{ inputs.solutionName }}
