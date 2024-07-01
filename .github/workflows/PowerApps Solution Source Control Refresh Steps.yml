@@ -44,6 +44,17 @@ jobs:
          solution-name: ${{ inputs.solutionName }}
          solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
 
+    - name: Export unmanaged version of solution 
+      uses: microsoft/powerplatform-actions/export-solution@v1
+      with:
+         environment-url: ${{ inputs.serviceConnectionUrl }}
+         app-id: ${{ inputs.applicationId }} 
+         client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
+         tenant-id: ${{ secrets.TENANTID }}
+         solution-name: ${{ inputs.solutionName }}
+         solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}_Managed.zip      
+         solution-type: Managed
+
  # - ${{ if eq(parameters.checkParameterFile, true) }}:
  #   - task: CmdLine@2
  #     displayName: "Generate Comparison Parameter File"
