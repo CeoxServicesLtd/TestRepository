@@ -9,7 +9,7 @@ on:
       checkParameterFile:
         required: true
         type: boolean
-      environment-url:
+      serviceConnectionUrl:
         required: true
         type: string
       applicationId:
@@ -24,8 +24,8 @@ jobs:
      - name: Update solution version            
        uses: microsoft/powerplatform-actions/set-online-solution-version@v1
        with:
-          environment-url: ${{ env.serviceConnectionUrl }}
-          app-id: ${{ env.applicationId }} 
+          environment-url: ${{ inputs.serviceConnectionUrl }}
+          app-id: ${{ inputs.applicationId }} 
           client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
           tenant-id: ${{ secrets.TENANTID }}
           version: 1.0.0.0
