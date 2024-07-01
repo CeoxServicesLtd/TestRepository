@@ -53,7 +53,7 @@ jobs:
          tenant-id: ${{ secrets.TENANTID }}
          solution-name: ${{ inputs.solutionName }}
          solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}_Managed.zip      
-         solution-type: Managed
+         managed: true
 
  # - ${{ if eq(parameters.checkParameterFile, true) }}:
  #   - task: CmdLine@2
