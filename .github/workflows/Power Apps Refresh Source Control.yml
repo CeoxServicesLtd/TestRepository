@@ -43,7 +43,7 @@ jobs:
       - name: Auth
         shell: pwsh
         run: |
-          Invoke-Expression -Command "pac auth create --url  ${{ env.serviceConnectionUrl }} --applicationId ${{ env.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
+          Invoke-Expression -Command "pac auth create --url ${{ needs.export_vars.outputs.serviceConnectionUrl }} --applicationId ${{ needs.export_vars.outputs.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
 
   Refresh-Source-Control-Steps:
     if: inputs.exportAutomatedDeploymentExample == true
