@@ -1,0 +1,13 @@
+<environmentvariabledefinition schemaname="ceox_EnvironmentVariable">
+  <description default="Example">
+    <label description="Example" languagecode="1033" />
+  </description>
+  <displayname default="Environment Variable">
+    <label description="Environment Variable" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.20230717.11</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>
