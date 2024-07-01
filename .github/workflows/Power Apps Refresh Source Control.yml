@@ -40,9 +40,7 @@ jobs:
       - name: Auth
         shell: pwsh
         run: |
-          $pacCommand = "auth create --url  ${{ env.serviceConnectionUrl }} --applicationId ${{ env.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
-          Invoke-Expression -Command "pac $pacCommand"
-
+          Invoke-Expression -Command "pac auth create --url  ${{ env.serviceConnectionUrl }} --applicationId ${{ env.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
 
 #  - task: PowerPlatformSetConnectionVariables@2
 #    name: ConnectionVariables  
