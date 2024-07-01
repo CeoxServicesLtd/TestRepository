@@ -28,9 +28,6 @@ jobs:
       applicationId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
     steps:
       - run: echo "Exporting variables to outputs."
-      - uses: actions/checkout@v2
-        with:
-          lfs: true
 
   Refresh-Source-Control-Steps:
     if: inputs.exportAutomatedDeploymentExample == true
@@ -71,19 +68,7 @@ jobs:
      #   SchemaFile: '$(Build.SourcesDirectory)\Deployment\Data\Automated Deployment Example Schema File.xml'
       #  DataFile: '$(Build.SourcesDirectory)\Deployment\Data\Automated Deployment Example Data.zip'
        # Overwrite: true
-      
-
-      - name: Git Fetch and Commit 
-        run: |
-          git fetch --all  
-          git config --global user.email "no-reply@github.com"
-          git config --global user.name "GitHub Actions"
-          git checkout main
-          git add --all 
-          git commit -m "Updates from the dev environment"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git push
-      
+           
   #- task: CmdLine@2
   #  displayName: "Commit changes to source control"
   #  inputs:
