@@ -42,43 +42,13 @@ jobs:
         run: |
           Invoke-Expression -Command "pac auth create --url  ${{ env.serviceConnectionUrl }} --applicationId ${{ env.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
 
-#  - task: PowerPlatformSetConnectionVariables@2
-#    name: ConnectionVariables  
- #   displayName: "Get Connection Details for PP Connection"
- #   inputs:
- #     authenticationType: 'PowerPlatformSPN'
- #     PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
-
- # - task: PowerShell@2
- #   displayName: 'Set Pac.Exe path' 
- #   inputs:
- #     targetType: 'inline'
- #     script: |
- #       $pacExePath = $env:POWERPLATFORMTOOLS_PACCLIPATH + "\pac\tools\pac.exe"  
- #       echo "##vso[task.setvariable variable=PACEXEPATH]$pacExePath"
-        
- # - task: PowerShell@2
- #   displayName: 'PAC Auth'
- #   inputs:
- #     targetType: 'inline'
- #     script: |
- #       $pacCommand = "auth create --url $(serviceConnectionUrl) --applicationId $(ConnectionVariables.BuildTools.ApplicationId) --clientSecret $(ConnectionVariables.BuildTools.ClientSecret) --tenant $(ConnectionVariables.BuildTools.TenantId)"
- #       Write-Host "Pac command - $(PACEXEPATH) $pacCommand"
- #       Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
-
- # - ${{ if eq(parameters.exportAutomatedDeploymentExample, true) }}:
- #   - template: Templates/PowerApps Solution Source Control Refresh Steps.yml
- #     parameters:
- #       solutionName: 'AutomatedDeploymentExample'
- #       checkParameterFile: false
- #       sourceConnectionName: ${{ parameters.sourceConnectionName }}
-
-  # - ${{ if eq(parameters.exportAutomatedDeploymentExample2, true) }}:
-  #  - template: Templates/PowerApps Solution Source Control Refresh Steps.yml
-  #    parameters:
-  #      solutionName: 'AutomatedDeploymentExample2'
-  #      checkParameterFile: true
- #       sourceConnectionName: ${{ parameters.sourceConnectionName }}
+      - ${{ if eq(parameters.exportAutomatedDeploymentExample, true) }}:
+        - name: Export Automated Deployment Example
+        - template: Templates/PowerApps Solution Source Control Refresh Steps.yml
+          parameters:
+            solutionName: 'AutomatedDeploymentExample'
+            checkParameterFile: false
+            sourceConnectionName: ${{ parameters.sourceConnectionName }}
 
   # - ${{ if eq(parameters.refreshConfigurationData, true) }}:
 #    - task: PowerPlatformExportData@2
