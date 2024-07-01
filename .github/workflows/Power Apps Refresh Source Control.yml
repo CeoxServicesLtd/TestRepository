@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       serviceConnectionUrl: "${{ (inputs.sourceConnectionName == 'Power Platform Dev') && 'https://pembasedev.crm11.dynamics.com' || '' }}"
-      app-applicationId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
+      applicationId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
     steps:
       - run: echo "Exporting variables to outputs."
 
