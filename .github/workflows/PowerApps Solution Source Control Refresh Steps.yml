@@ -20,16 +20,19 @@ jobs:
   PowerApps-Solution-Source-Control-Refresh-Steps:
     runs-on: windows-latest
     steps:
+    
+    - name: powerplatform-actions             
+      uses: microsoft/powerplatform-actions/actions-install@v1
 
-     - name: Update solution version            
-       uses: microsoft/powerplatform-actions/set-online-solution-version@v1
-       with:
-          environment-url: ${{ inputs.serviceConnectionUrl }}
-          app-id: ${{ inputs.applicationId }} 
-          client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
-          tenant-id: ${{ secrets.TENANTID }}
-          version: 1.0.0.0
-          name: ${{ inputs.solutionName }}
+    - name: Update solution version            
+      uses: microsoft/powerplatform-actions/set-online-solution-version@v1
+      with:
+         environment-url: ${{ inputs.serviceConnectionUrl }}
+         app-id: ${{ inputs.applicationId }} 
+         client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
+         tenant-id: ${{ secrets.TENANTID }}
+         version: 1.0.0.0
+         name: ${{ inputs.solutionName }}
 
 #steps:
 #  - task: PowerPlatformSetSolutionVersion@2
