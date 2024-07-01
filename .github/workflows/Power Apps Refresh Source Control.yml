@@ -20,7 +20,6 @@ on:
 
 env:
   serviceConnectionUrl: ${{ (inputs.sourceConnectionName == 'Power Platform Dev') && 'https://pembasedev.crm11.dynamics.com' || '' }}
-  tenantId: ""
   applicationId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
 
 jobs:
@@ -48,6 +47,8 @@ jobs:
     with:
       solutionName: AutomatedDeploymentExample
       checkParameterFile: false
+      serviceConnectionUrl: ${{ env.serviceConnectionUrl }}
+      applicationId:  ${{ env.applicationId }}
     secrets: inherit
 
   # - ${{ if eq(parameters.refreshConfigurationData, true) }}:
