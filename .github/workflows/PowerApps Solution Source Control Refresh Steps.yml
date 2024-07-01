@@ -21,6 +21,10 @@ jobs:
     runs-on: windows-latest
     steps:
 
+    - uses: actions/checkout@v2
+      with:
+        lfs: true
+
     - name: powerplatform-actions             
       uses: microsoft/powerplatform-actions/actions-install@v1
 
@@ -82,6 +86,18 @@ jobs:
          solution-type: both
          solution-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
          solution-folder:  ${{ github.workspace }}\Solutions\${{ inputs.solutionName }}
+
+    - name: Git Fetch and Commit 
+      run: |
+        git fetch --all  
+        git config --global user.email "no-reply@github.com"
+        git config --global user.name "GitHub Actions"
+        git checkout main
+        git add --all 
+        git commit -m "Updates from the dev environment"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+        git push
+
 
   # - task: PowerPlatformUnpackSolution@2
 #    displayName: "Unpack solution ${{ parameters.solutionName }}"
