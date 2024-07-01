@@ -9,6 +9,12 @@ on:
       checkParameterFile:
         required: true
         type: boolean
+      environment-url:
+        required: true
+        type: string
+      applicationId:
+        required: true
+        type: string      
         
 jobs:
   PowerApps-Solution-Source-Control-Refresh-Steps:
