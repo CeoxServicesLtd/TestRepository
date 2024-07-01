@@ -42,17 +42,7 @@ jobs:
          client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
          tenant-id: ${{ secrets.TENANTID }}
          solution-name: ${{ inputs.solutionName }}
-         solution-output-file: ${{ github.workspace }}\${{ inputs.solutionName }}.zip
-
-#  - task: PowerPlatformExportSolution@2
-#    displayName: "Export unmanaged version of solution ${{ parameters.solutionName }}"
-#    inputs:
-#      authenticationType: 'PowerPlatformSPN'
-#      PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
-#      SolutionName: '${{ parameters.solutionName }}'
-#      SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip'
-#      Managed: false
-#      MaxAsyncWaitTime: 120
+         solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
 
  # - ${{ if eq(parameters.checkParameterFile, true) }}:
  #   - task: CmdLine@2
@@ -74,15 +64,17 @@ jobs:
   #          throw "Parameter files are different; confirm parameter files are up-to-date"
   #        }
 
-  # - task: PowerPlatformExportSolution@2
-#     displayName: "Export managed version of solution ${{ parameters.solutionName }}"
-    #inputs:
-    #  authenticationType: 'PowerPlatformSPN'
-    #  PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
-    #  SolutionName: '${{ parameters.solutionName }}'
-    #  SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}_managed.zip'
-    #  Managed: true
-    #  MaxAsyncWaitTime: 120
+
+    - name: Unpack solution 
+      uses: microsoft/powerplatform-actions/unpack-solution@v1
+      with:
+         environment-url: ${{ inputs.serviceConnectionUrl }}
+         app-id: ${{ inputs.applicationId }} 
+         client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
+         tenant-id: ${{ secrets.TENANTID }}
+         solution-type: both
+         solution-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
+         solution-folder:  ${{ github.workspace }}\Solutions\${{ inputs.solutionName }}
 
   # - task: PowerPlatformUnpackSolution@2
 #    displayName: "Unpack solution ${{ parameters.solutionName }}"
