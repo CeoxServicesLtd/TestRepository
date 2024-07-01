@@ -18,14 +18,18 @@ on:
         type: boolean
         default: false
 
-env:
-  serviceConnectionUrl: ${{ (inputs.sourceConnectionName == 'Power Platform Dev') && 'https://pembasedev.crm11.dynamics.com' || '' }}
-  applicationId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
-
 jobs:
+  export_vars:
+    name: Export Variables to Output
+    runs-on: ubuntu-latest
+    outputs:
+      serviceConnectionUrl: "${{ (inputs.sourceConnectionName == 'Power Platform Dev') && 'https://pembasedev.crm11.dynamics.com' || '' }}"
+      app-applicationId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
+    steps:
+      - run: echo "Exporting variables to outputs."
+
   Refresh-Source-Control:
     runs-on: windows-latest
-
     steps:
       - name: powerplatform-actions             
         uses: microsoft/powerplatform-actions/actions-install@v1
@@ -44,11 +48,12 @@ jobs:
   Refresh-Source-Control-Steps:
     if: inputs.exportAutomatedDeploymentExample == true
     uses: ./.github/workflows/PowerApps Solution Source Control Refresh Steps.yml
+    needs: [export_vars]
     with:
       solutionName: AutomatedDeploymentExample
       checkParameterFile: false
-      serviceConnectionUrl: "${{ env.serviceConnectionUrl }}"
-      applicationId:  "${{ env.applicationId }}"
+      serviceConnectionUrl: ${{ needs.export_vars.outputs.serviceConnectionUrl }}
+      applicationId:  ${{ needs.export_vars.outputs.applicationId }}
     secrets: inherit
 
   # - ${{ if eq(parameters.refreshConfigurationData, true) }}:
