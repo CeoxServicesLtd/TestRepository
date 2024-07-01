@@ -41,8 +41,7 @@ jobs:
         shell: pwsh
         run: |
           $pacCommand = "auth create --url  ${{ env.serviceConnectionUrl }} --applicationId ${{ env.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
-          Write-Host "Pac command - $(PACEXEPATH) $pacCommand"
-          Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
+          Invoke-Expression -Command "pac $pacCommand"
 
 
 #  - task: PowerPlatformSetConnectionVariables@2
