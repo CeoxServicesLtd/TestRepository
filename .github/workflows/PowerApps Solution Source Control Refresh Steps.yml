@@ -18,60 +18,69 @@ jobs:
     runs-on: windows-latest
     steps:
 
-        
-steps:
-  - task: PowerPlatformSetSolutionVersion@2
-    displayName: "Set solution ${{ parameters.solutionName }} version to current build version"
-    inputs:
-      authenticationType: 'PowerPlatformSPN'
-      PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
-      SolutionName: '${{ parameters.solutionName }}'
-      SolutionVersionNumber: '1.0.$(Build.BuildNumber)'
+     - name: Update solution version            
+       uses: microsoft/powerplatform-actions/set-online-solution-version@v1
+       with:
+          environment-url: ${{ env.serviceConnectionUrl }}
+          app-id: ${{ env.applicationId }} 
+          client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
+          tenant-id: ${{ secrets.TENANTID }}
+          version: 1.0.0.0
+          name: ${{ inputs.solutionName }}
 
-  - task: PowerPlatformExportSolution@2
-    displayName: "Export unmanaged version of solution ${{ parameters.solutionName }}"
-    inputs:
-      authenticationType: 'PowerPlatformSPN'
-      PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
-      SolutionName: '${{ parameters.solutionName }}'
-      SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip'
-      Managed: false
-      MaxAsyncWaitTime: 120
+#steps:
+#  - task: PowerPlatformSetSolutionVersion@2
+#    displayName: "Set solution ${{ parameters.solutionName }} version to current build version"
+#    inputs:
+#      authenticationType: 'PowerPlatformSPN'
+#      PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
+#      SolutionName: '${{ parameters.solutionName }}'
+#      SolutionVersionNumber: '1.0.$(Build.BuildNumber)'#
 
-  - ${{ if eq(parameters.checkParameterFile, true) }}:
-    - task: CmdLine@2
-      displayName: "Generate Comparison Parameter File"
-      inputs:
-        script: '$(PACEXEPATH) solution create-settings --solution-zip "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip" --settings-file "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.json"'
+#  - task: PowerPlatformExportSolution@2
+#    displayName: "Export unmanaged version of solution ${{ parameters.solutionName }}"
+#    inputs:
+#      authenticationType: 'PowerPlatformSPN'
+#      PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
+#      SolutionName: '${{ parameters.solutionName }}'
+#      SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip'
+#      Managed: false
+#      MaxAsyncWaitTime: 120
 
-  - ${{ if eq(parameters.checkParameterFile, true) }}:
-    - task: PowerShell@2
-      displayName: "Compare Parameter Files"
-      inputs:
-        targetType: 'inline'
-        script: |
-          $sourceFile = Get-Content -Path "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.json"
-          $targetFile = Get-Content -Path "$(Build.SourcesDirectory)\Deployment\Solution Parameter Files\Reference Files\${{ parameters.solutionName }}.json"
+ # - ${{ if eq(parameters.checkParameterFile, true) }}:
+ #   - task: CmdLine@2
+ #     displayName: "Generate Comparison Parameter File"
+ #     inputs:
+ #       script: '$(PACEXEPATH) solution create-settings --solution-zip "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip" --settings-file "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.json"'
+
+  # - ${{ if eq(parameters.checkParameterFile, true) }}:
+#    - task: PowerShell@2
+ #     displayName: "Compare Parameter Files"
+ #     inputs:
+ #       targetType: 'inline'
+ #       script: |
+ #         $sourceFile = Get-Content -Path "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.json"
+ #         $targetFile = Get-Content -Path "$(Build.SourcesDirectory)\Deployment\Solution Parameter Files\Reference Files\${{ parameters.solutionName }}.json"
           
-          if(Compare-Object $sourceFile $targetFile)
-          {
-            throw "Parameter files are different; confirm parameter files are up-to-date"
-          }
+  #        if(Compare-Object $sourceFile $targetFile)
+  #        {
+  #          throw "Parameter files are different; confirm parameter files are up-to-date"
+  #        }
 
-  - task: PowerPlatformExportSolution@2
-    displayName: "Export managed version of solution ${{ parameters.solutionName }}"
-    inputs:
-      authenticationType: 'PowerPlatformSPN'
-      PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
-      SolutionName: '${{ parameters.solutionName }}'
-      SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}_managed.zip'
-      Managed: true
-      MaxAsyncWaitTime: 120
+  # - task: PowerPlatformExportSolution@2
+#     displayName: "Export managed version of solution ${{ parameters.solutionName }}"
+    #inputs:
+    #  authenticationType: 'PowerPlatformSPN'
+    #  PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
+    #  SolutionName: '${{ parameters.solutionName }}'
+    #  SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}_managed.zip'
+    #  Managed: true
+    #  MaxAsyncWaitTime: 120
 
-  - task: PowerPlatformUnpackSolution@2
-    displayName: "Unpack solution ${{ parameters.solutionName }}"
-    inputs:
-      SolutionInputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip'
-      SolutionTargetFolder: '$(Build.SourcesDirectory)\Solutions\${{ parameters.solutionName }}'
-      SolutionType: 'Both'
+  # - task: PowerPlatformUnpackSolution@2
+#    displayName: "Unpack solution ${{ parameters.solutionName }}"
+ #   inputs:
+  #    SolutionInputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip'
+  #    SolutionTargetFolder: '$(Build.SourcesDirectory)\Solutions\${{ parameters.solutionName }}'
+   #   SolutionType: 'Both'
 
