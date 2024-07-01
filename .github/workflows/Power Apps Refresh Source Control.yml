@@ -44,7 +44,7 @@ jobs:
 
   Refresh-Source-Control-Steps:
     if: inputs.exportAutomatedDeploymentExample == true
-    uses: .github/workflows/PowerApps Solution Source Control Refresh Steps.yml@main
+    uses: ./.github/workflows/PowerApps Solution Source Control Refresh Steps.yml@main
     with:
       solutionName: AutomatedDeploymentExample
       checkParameterFile: false
