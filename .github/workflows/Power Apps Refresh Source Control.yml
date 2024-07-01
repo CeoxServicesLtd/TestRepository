@@ -28,8 +28,20 @@ jobs:
     steps:
       - run: echo "Exporting variables to outputs."
 
+  Refresh-Source-Control-Steps:
+    if: inputs.exportAutomatedDeploymentExample == true
+    uses: ./.github/workflows/PowerApps Solution Source Control Refresh Steps.yml
+    needs: export_vars
+    with:
+      solutionName: AutomatedDeploymentExample
+      checkParameterFile: false
+      serviceConnectionUrl: ${{ needs.export_vars.outputs.serviceConnectionUrl }}
+      applicationId:  ${{ needs.export_vars.outputs.applicationId }}
+    secrets: inherit
+
   Refresh-Source-Control:
     runs-on: windows-latest
+    needs: Refresh-Source-Control-Steps
     steps:
       - name: powerplatform-actions             
         uses: microsoft/powerplatform-actions/actions-install@v1
@@ -45,16 +57,6 @@ jobs:
         run: |
           Invoke-Expression -Command "pac auth create --url ${{ needs.export_vars.outputs.serviceConnectionUrl }} --applicationId ${{ needs.export_vars.outputs.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
 
-  Refresh-Source-Control-Steps:
-    if: inputs.exportAutomatedDeploymentExample == true
-    uses: ./.github/workflows/PowerApps Solution Source Control Refresh Steps.yml
-    needs: [export_vars]
-    with:
-      solutionName: AutomatedDeploymentExample
-      checkParameterFile: false
-      serviceConnectionUrl: ${{ needs.export_vars.outputs.serviceConnectionUrl }}
-      applicationId:  ${{ needs.export_vars.outputs.applicationId }}
-    secrets: inherit
 
   # - ${{ if eq(parameters.refreshConfigurationData, true) }}:
 #    - task: PowerPlatformExportData@2
