@@ -18,21 +18,19 @@ on:
         type: boolean
         default: false
 
+env:
+  serviceConnectionUrl: ${{ (inputs.sourceConnectionName == 'Power Platform Dev') && 'https://pembasedev.crm11.dynamics.com' || '' }}
+
 jobs:
   Refresh-Source-Control:
     runs-on: windows-latest
 
+    steps:
 
-variables:
-  - name: serviceConnectionUrl
-    ${{ if eq(parameters['sourceConnectionName'], 'Power Platform Dev') }}: 
-      value: 'https://pembasedev.crm11.dynamics.com'
-
-steps:
-  - task: PowerPlatformToolInstaller@2
-    displayName: "Install Power Platform Tools"
-    inputs:
-      DefaultVersion: true
+      - task: PowerPlatformToolInstaller@2
+        displayName: "Install Power Platform Tools"
+        inputs:
+          DefaultVersion: true
 
   - task: PowerPlatformSetConnectionVariables@2
     name: ConnectionVariables  
