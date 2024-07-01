@@ -52,10 +52,10 @@ jobs:
           $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
           "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append
 
-      - name: Auth
-        shell: pwsh
-        run: |
-          Invoke-Expression -Command "pac auth create --url ${{ needs.export_vars.outputs.serviceConnectionUrl }} --applicationId ${{ needs.export_vars.outputs.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
+ #     - name: Auth
+#        shell: pwsh
+#        run: |
+   #       Invoke-Expression -Command "pac auth create --url ${{ needs.export_vars.outputs.serviceConnectionUrl }} --applicationId ${{ needs.export_vars.outputs.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
 
 
   # - ${{ if eq(parameters.refreshConfigurationData, true) }}:
