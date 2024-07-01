@@ -21,7 +21,7 @@ on:
 env:
   serviceConnectionUrl: ${{ (inputs.sourceConnectionName == 'Power Platform Dev') && 'https://pembasedev.crm11.dynamics.com' || '' }}
   tenantId: ""
-  applicationId: ""
+  applicationId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
 
 jobs:
   Refresh-Source-Control:
@@ -40,7 +40,7 @@ jobs:
       - name: Auth
         shell: pwsh
         run: |
-          $pacCommand = "auth create --url  ${{ env.serviceConnectionUrl }} --applicationId ${{ env.applicationId }} --clientSecret ${{ secrets.MYPASSWORD }} --tenant ${{ env.tenantId }}
+          $pacCommand = "auth create --url  ${{ env.serviceConnectionUrl }} --applicationId ${{ env.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}
           Write-Host "Pac command - $(PACEXEPATH) $pacCommand"
           Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
 
