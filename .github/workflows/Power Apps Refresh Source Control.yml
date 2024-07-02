@@ -40,7 +40,7 @@ jobs:
       applicationId:  ${{ needs.export_vars.outputs.applicationId }}
     secrets: inherit
 
-  Refresh-Source-Control:
+  Refresh-Data:
     runs-on: windows-latest
     needs: [export_vars, Refresh-Source-Control-Steps]
     if: always() && (needs.Refresh-Source-Control-Steps.result == 'skipped' || needs.Refresh-Source-Control-Steps.result == 'success') && inputs.refreshConfigurationData == true
@@ -52,11 +52,11 @@ jobs:
       - name: powerplatform-actions             
         uses: microsoft/powerplatform-actions/actions-install@v1
 
-      - name: Add pac to PATH
-        shell: pwsh
-        run: |
-          $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
-          "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append
+   #   - name: Add pac to PATH
+   #     shell: pwsh
+   #     run: |
+   #       $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
+   #       "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append
 
   
       - name: Export Configuration Data
@@ -81,32 +81,4 @@ jobs:
           git commit -m "Updates from the dev environment"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git push
-
- #     - name: Auth
-#        shell: pwsh
-#        run: |
-   #       Invoke-Expression -Command "pac auth create --url ${{ needs.export_vars.outputs.serviceConnectionUrl }} --applicationId ${{ needs.export_vars.outputs.applicationId }} --clientSecret ${{ secrets.DEVAPPLICATIONSECRET }} --tenant ${{ secrets.TENANTID }}"
-
-
-  # - ${{ if eq(parameters.refreshConfigurationData, true) }}:
-#    - task: PowerPlatformExportData@2
- #     displayName: 'Export Configuration Data' 
-  #    inputs:
-   #     authenticationType: 'PowerPlatformSPN'
-    #    PowerPlatformSPN: ${{ parameters.sourceConnectionName }}
-     #   SchemaFile: '$(Build.SourcesDirectory)\Deployment\Data\Automated Deployment Example Schema File.xml'
-      #  DataFile: '$(Build.SourcesDirectory)\Deployment\Data\Automated Deployment Example Data.zip'
-       # Overwrite: true
-           
-  #- task: CmdLine@2
-  #  displayName: "Commit changes to source control"
-  #  inputs:
-  #    script: |
-  #      echo commit all changes
-  #      git config user.email "$(Build.QueuedById)"
-  #      git config user.name "$(Build.QueuedBy)"
-  #      git checkout -b "$(Build.SourceBranchName)"
-  #      git add --all
-  #      git commit -m "solution init"
-  #      echo push code to new repo
-  #      git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin $(Build.SourceBranchName)
+          
