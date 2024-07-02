@@ -1,0 +1,122 @@
+[
+    {
+        "name": "localeid",
+        "type": "int",
+        "value": 2057
+    },
+    {
+        "name": "isauditenabled",
+        "type": "bool",
+        "value": true
+    },
+    {
+        "name": "isreadauditenabled",
+        "type": "bool",
+        "value": false
+    },
+    {
+        "name": "isuseraccessauditenabled",
+        "type": "bool",
+        "value": false
+    },    
+    {
+        "name": "plugintracelogsetting",
+        "type": "int",
+        "value": 2
+    },
+    {
+        "name": "isautosaveenabled",
+        "type": "bool",
+        "value": "false"
+    },
+    {
+        "name": "currencyformatcode",
+        "type": "int",
+        "value": 0
+    },
+    {
+        "name": "dateformatcode",
+        "type": "int",
+        "value": 2
+    },
+    {
+        "name": "dateformatstring",
+        "type": "string",
+        "value": "dd/MM/yyyy"
+    },    
+    {
+        "name": "currencyformatcode",
+        "type": "int",
+        "value": 0
+    },
+    {
+        "name": "longdateformatcode",
+        "type": "int",
+        "value": 1
+    },
+    {
+        "name": "timeformatstring",
+        "type": "string",
+        "value": "HH:mm"
+    },
+    {
+        "name": "timeformatcode",
+        "type": "int",
+        "value": 0
+    },
+    {
+        "name": "numberformat",
+        "type": "string",
+        "value": "us"
+    },
+    {
+        "name": "numbergroupformat",
+        "type": "int",
+        "value": 3
+    },
+    {
+        "name": "negativecurrencyformatcode",
+        "type": "int",
+        "value": 1
+    },
+    {
+        "name": "negativeformatcode",
+        "type": "int",
+        "value": 1
+    },
+    {
+        "name": "negativecurrencyformatcode",
+        "type": "int",
+        "value": 1
+    },
+    {
+        "name": "emailcorrelationenabled",
+        "type": "bool",
+        "value": false
+    },
+    {
+        "name": "isexternalsearchindexenabled",
+        "type": "bool",
+        "value": true
+    },        
+    {
+        "name": "isfulltextsearchenabled",
+        "type": "bool",
+        "value": true
+    },    
+    {
+        "name": "relevancesearchenabledbyplatform",
+        "type": "bool",
+        "value": true
+    },
+    {
+        "name": "newsearchexperienceenabled",
+        "type": "bool",
+        "value": true
+    },    
+    {
+        "name": "powerbifeatureenabled",
+        "type": "bool",
+        "value": true
+    }
+]

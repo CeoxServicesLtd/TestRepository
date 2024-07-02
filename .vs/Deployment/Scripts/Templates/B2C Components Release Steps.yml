@@ -1,0 +1,48 @@
+parameters:
+
+- name: environment
+  type: string
+  default: ''
+  
+- name: resourcegroup
+  type: string
+  default: ''
+  
+  
+- name: subscriptionId
+  type: string
+  default: ''
+
+jobs:
+    - deployment: Deploy
+      displayName: 'Deploy to ${{ parameters.environment }}'
+      pool:
+        vmImage: 'windows-latest'
+      environment: '${{ parameters.environment }}'
+      strategy:
+        runOnce:
+            deploy:
+                steps:
+                - task: AzureResourceManagerTemplateDeployment@3
+                  inputs:
+                    deploymentScope: 'Resource Group'
+                    azureResourceManagerConnection: 'Azure-rg-chub-${{ parameters.resourcegroup }}-1'
+                    subscriptionId: '${{ parameters.subscriptionId }}'
+                    action: 'Create Or Update Resource Group'
+                    resourceGroupName: 'rg-chub-${{ parameters.resourcegroup }}-1'
+                    location: 'UK South'
+                    templateLocation: 'Linked artifact'
+                    csmFile: '$(Pipeline.Workspace)/AzureARMScripts/B2CComponents.json'
+                    csmParametersFile: '$(Pipeline.Workspace)/AzureARMScripts/B2CComponents.${{ parameters.resourcegroup }}.parameters.json'
+                    deploymentMode: 'Incremental'
+
+                - task: AzureRmWebAppDeployment@4
+                  displayName: B2C Function App Deployment
+                  inputs:
+                    ConnectionType: 'AzureRM'
+                    azureSubscription: 'Azure-rg-chub-${{ parameters.resourcegroup }}-1'
+                    appType: 'webApp'
+                    WebAppName: 'func-chubazureb2c-${{ parameters.resourcegroup }}-1'
+                    deployToSlotOrASE: true
+                    ResourceGroupName: 'rg-chub-${{ parameters.resourcegroup }}-1'
+                    packageForLinux: '$(Pipeline.Workspace)/AzureB2CFunctionApp/AzureB2CFunctionApp.zip'

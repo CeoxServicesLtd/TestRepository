@@ -1,0 +1,170 @@
+trigger:
+- none
+
+parameters:
+- name: deployConfigurationData
+  displayName: 'Deploy Configuration Data?'
+  type: boolean
+  default: false
+- name: deployAutomatedDeploymentExample
+  displayName: 'Deploy Automated Example?'
+  default: No
+  values:
+  - No
+  - Yes
+- name: deployAutomatedDeploymentExample2
+  displayName: 'Deploy Automated Example 2?'
+  default: No
+  values:
+  - No
+  - Yes
+- name: updateOrganizationSettings
+  displayName: 'Update Organization Settings?'
+  default: No
+  values:
+  - No
+  - Yes  
+
+variables:
+  - group: alm-accelerator-variable-group
+  - name: solutionVersion
+    value: string
+  - name: solutionDisplayName
+    value: string
+    
+pool:
+  vmImage: 'windows-latest'
+
+stages:
+- stage: Build
+  jobs:
+
+  - job: BuildSolution
+    displayName: 'Build Solution for Import'
+    steps:
+    - task: PowerShell@2
+      condition: |
+        or(notIn(variables['UAT_AutomatedDeploymentExample'], 'Update', 'Upgrade'),
+        notIn(variables['UAT_AutomatedDeploymentExample2'], 'Update', 'Upgrade'))
+      displayName: 'PowerShell Error' 
+      inputs:
+        targetType: 'inline'
+        script: 'Throw "UI Variables are Malformed"'
+        
+    - task: PowerPlatformToolInstaller@2
+      inputs:
+        DefaultVersion: true
+
+    - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
+      - task: PowerPlatformPackSolution@2
+        displayName: 'Pack AutomatedDeploymentExample2' 
+        inputs:
+          SolutionSourceFolder: '$(Build.SourcesDirectory)\Solutions\AutomatedDeploymentExample'
+          SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\Solutions\AutomatedDeploymentExample.zip'
+          SolutionType: 'Both'
+
+    - ${{ if ne(parameters.deployAutomatedDeploymentExample2, 'No') }}:
+      - task: PowerPlatformPackSolution@2
+        displayName: 'Pack AutomatedDeploymentExample2' 
+        inputs:
+          SolutionSourceFolder: '$(Build.SourcesDirectory)\Solutions\AutomatedDeploymentExample2'
+          SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\Solutions\AutomatedDeploymentExample2.zip'
+          SolutionType: 'Both'
+
+    - ${{ if eq(parameters.deployConfigurationData, true) }}:
+      - task: CopyFiles@2
+        displayName: 'Copy data files' 
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)\Deployment\Data'
+          Contents: 'Automated Deployment Example Data.zip'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)\Data'
+
+    - ${{ if or(ne(parameters.deployAutomatedDeploymentExample, 'No'), ne(parameters.deployAutomatedDeploymentExample2, 'No')) }}:
+      - task: CopyFiles@2
+        displayName: 'Copy solution parameter files' 
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)\Deployment\Solution Parameter Files'
+          Contents: '*.json'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)\SolutionParameterFiles'
+
+
+    - ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:
+      - task: CopyFiles@2
+        displayName: 'Copy Organization Setting Files' 
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)\Deployment\Organisation Settings Files'
+          Contents: '*.json'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)\OrganisationSettingsFiles'          
+
+    - task: CopyFiles@2
+      displayName: 'Copy Pipeline Utility Files' 
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\Deployment\PowerShell'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\PipelineUtils\PowerShell'
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish PipelineUtils"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/PipelineUtils'
+        ArtifactName: 'PipelineUtils'
+        publishLocation: 'Container'
+
+    - ${{ if eq(parameters.deployConfigurationData, true) }}:
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Data"
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/Data'
+          ArtifactName: 'Data'
+          publishLocation: 'Container' 
+
+    - ${{ if or(ne(parameters.deployAutomatedDeploymentExample, 'No'), ne(parameters.deployAutomatedDeploymentExample2, 'No')) }}:
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Solutions"
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/Solutions'
+          ArtifactName: 'Solutions'
+          publishLocation: 'Container'         
+
+    - ${{ if or(ne(parameters.deployAutomatedDeploymentExample, 'No'), ne(parameters.deployAutomatedDeploymentExample2, 'No')) }}:
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Solution Parameter Files"
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/SolutionParameterFiles'
+          ArtifactName: 'SolutionParameterFiles'
+          publishLocation: 'Container'              
+
+    - ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:     
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Organisation Settings Files"
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/OrganisationSettingsFiles'
+          ArtifactName: 'OrganisationSettingsFiles'
+          publishLocation: 'Container'            
+
+    - ${{ if ne(parameters.deployAutomatedDeploymentExample2, 'No') }}:
+      - task: CopyFiles@2
+        displayName: 'Copy Flow Activation Order File' 
+        inputs:
+          SourceFolder: '$(Build.SourcesDirectory)\Deployment\Flow Activation'
+          TargetFolder: '$(Build.ArtifactStagingDirectory)\Flow Activation'
+      - task: PublishBuildArtifacts@1
+        displayName: "Publish Flow Activation Files"
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/Flow Activation'
+          ArtifactName: 'Flow Activation'
+          publishLocation: 'Container'                   
+
+- stage: UAT
+  displayName: "Deploy To UAT"
+  jobs:
+      - template: Templates/Power Apps Deployment Steps.yml
+        parameters:
+          environment: 'UAT'
+          serviceConnectionUrl: 'https://pemprodev.crm11.dynamics.com/' 
+          powerPlatformServiceConnectionName: 'Power Platform UAT'
+          deployAutomatedDeploymentExample: ${{parameters.deployAutomatedDeploymentExample}}
+          deployAutomatedDeploymentExample2: ${{parameters.deployAutomatedDeploymentExample2}}
+          deployConfigurationData: ${{parameters.deployConfigurationData}}
+          updateOrganizationSettings: ${{parameters.updateOrganizationSettings}}
+          deployAutomatedDeploymentExampleMethodVariableName: 'UAT_AutomatedDeploymentExample'
+          deployAutomatedDeploymentExample2MethodVariableName: 'UAT_AutomatedDeploymentExample2'
