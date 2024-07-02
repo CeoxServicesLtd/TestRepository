@@ -83,27 +83,6 @@ jobs:
          solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}_Managed.zip      
          managed: true
   
- # - ${{ if eq(parameters.checkParameterFile, true) }}:
- #   - task: CmdLine@2
- #     displayName: "Generate Comparison Parameter File"
- #     inputs:
- #       script: '$(PACEXEPATH) solution create-settings --solution-zip "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip" --settings-file "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.json"'
-
-  # - ${{ if eq(parameters.checkParameterFile, true) }}:
-#    - task: PowerShell@2
- #     displayName: "Compare Parameter Files"
- #     inputs:
- #       targetType: 'inline'
- #       script: |
- #         $sourceFile = Get-Content -Path "$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.json"
- #         $targetFile = Get-Content -Path "$(Build.SourcesDirectory)\Deployment\Solution Parameter Files\Reference Files\${{ parameters.solutionName }}.json"
-          
-  #        if(Compare-Object $sourceFile $targetFile)
-  #        {
-  #          throw "Parameter files are different; confirm parameter files are up-to-date"
-  #        }
-
-
     - name: Unpack solution 
       uses: microsoft/powerplatform-actions/unpack-solution@v1
       with:
