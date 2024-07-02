@@ -51,14 +51,7 @@ jobs:
           
       - name: powerplatform-actions             
         uses: microsoft/powerplatform-actions/actions-install@v1
-
-   #   - name: Add pac to PATH
-   #     shell: pwsh
-   #     run: |
-   #       $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
-   #       "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append
-
-  
+ 
       - name: Export Configuration Data
         uses: microsoft/powerplatform-actions/export-data@v1
         if: inputs.refreshConfigurationData == true
