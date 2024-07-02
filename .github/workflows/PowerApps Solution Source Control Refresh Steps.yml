@@ -54,22 +54,11 @@ jobs:
          solution-name: ${{ inputs.solutionName }}
          solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
 
-    - name: Export unmanaged version of solution 
-      uses: microsoft/powerplatform-actions/export-solution@v1
-      with:
-         environment-url: ${{ inputs.serviceConnectionUrl }}
-         app-id: ${{ inputs.applicationId }} 
-         client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
-         tenant-id: ${{ secrets.TENANTID }}
-         solution-name: ${{ inputs.solutionName }}
-         solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}_Managed.zip      
-         managed: true
-
     - name: Generate Comparison Parameter File
       if:  ${{ inputs.checkParameterFile }} == true
       shell: cmd
       run: |
-        pac solution create-settings --solution-zip ".\${{ inputs.solutionName }}.zip" --settings-file "${{ runner.temp }}\${{ inputs.solutionName }}.json"
+        pac solution create-settings --solution-zip "${{ runner.temp }}\${{ inputs.solutionName }}.zip" --settings-file "${{ runner.temp }}\${{ inputs.solutionName }}.json"
 
     - name: Compare Parameter Files 
       if:  ${{ inputs.checkParameterFile }} == true    
@@ -81,7 +70,18 @@ jobs:
           if(Compare-Object $sourceFile $targetFile)
           {
             throw "Parameter files are different; confirm parameter files are up-to-date"
-          }
+          }         
+
+    - name: Export Managed version of solution 
+      uses: microsoft/powerplatform-actions/export-solution@v1
+      with:
+         environment-url: ${{ inputs.serviceConnectionUrl }}
+         app-id: ${{ inputs.applicationId }} 
+         client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
+         tenant-id: ${{ secrets.TENANTID }}
+         solution-name: ${{ inputs.solutionName }}
+         solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}_Managed.zip      
+         managed: true
   
  # - ${{ if eq(parameters.checkParameterFile, true) }}:
  #   - task: CmdLine@2
