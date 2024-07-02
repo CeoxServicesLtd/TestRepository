@@ -44,6 +44,10 @@ jobs:
     runs-on: windows-latest
     needs: Refresh-Source-Control-Steps
     steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+          
       - name: powerplatform-actions             
         uses: microsoft/powerplatform-actions/actions-install@v1
 
@@ -52,6 +56,30 @@ jobs:
         run: |
           $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
           "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+  
+      - name: Export Configuration Data
+        uses: microsoft/powerplatform-actions/export-data@v1
+        if: inputs.refreshConfigurationData == true
+        with:
+           environment-url: ${{ inputs.serviceConnectionUrl }}
+           app-id: ${{ inputs.applicationId }} 
+           client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
+           tenant-id: ${{ secrets.TENANTID }}
+           schema-file: '.\Deployment\Data\Automated Deployment Example Schema File.xml'
+           data-file: '.\Deployment\Data\Automated Deployment Example Data.zip'
+           overwrite: true
+
+      - name: Git Fetch and Commit 
+        run: |
+          git fetch --all  
+          git config --global user.email "no-reply@github.com"
+          git config --global user.name "GitHub Actions"
+          git checkout main
+          git add --all 
+          git commit -m "Updates from the dev environment"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git push
 
  #     - name: Auth
 #        shell: pwsh
