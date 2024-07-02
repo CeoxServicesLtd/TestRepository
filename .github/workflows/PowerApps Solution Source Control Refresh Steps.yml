@@ -34,6 +34,9 @@ jobs:
         $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
         "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append      
 
+    - name: Get the current date in UTC
+      run: echo "CURRENT_DATE=$(TZ=UTC date +'%Y%m%d')" >> $GITHUB_ENV
+
     - name: Update solution version            
       uses: microsoft/powerplatform-actions/set-online-solution-version@v1
       with:
@@ -41,7 +44,7 @@ jobs:
          app-id: ${{ inputs.applicationId }} 
          client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
          tenant-id: ${{ secrets.TENANTID }}
-         version: 1.0.0.0
+         version: 1.0.${{ env.CURRENT_DATE }}.${{ github.run_number }}
          name: ${{ inputs.solutionName }}
 
     - name: Export unmanaged version of solution 
