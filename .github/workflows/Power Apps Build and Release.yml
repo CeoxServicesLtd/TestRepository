@@ -1,39 +1,40 @@
-trigger:
-- none
+name: Generate Solution Parameter File
 
-parameters:
-- name: deployConfigurationData
-  displayName: 'Deploy Configuration Data?'
-  type: boolean
-  default: false
-- name: deployAutomatedDeploymentExample
-  displayName: 'Deploy Automated Example?'
-  default: No
-  values:
-  - No
-  - Yes
-- name: deployAutomatedDeploymentExample2
-  displayName: 'Deploy Automated Example 2?'
-  default: No
-  values:
-  - No
-  - Yes
-- name: updateOrganizationSettings
-  displayName: 'Update Organization Settings?'
-  default: No
-  values:
-  - No
-  - Yes  
+on:
+  workflow_dispatch:
+    inputs:
+      deployConfigurationData:
+        description: 'Deploy Configuration Data?'
+        type: boolean
+        default: false
+      deployAutomatedDeploymentExample:
+        description: 'Deploy  Automated Example?'
+        type: boolean
+        default: false
+      updateOrganizationSettings:
+        description: 'Update Organization Settings?'
+        type: boolean
+        default: false        
+      deployAutomatedDeploymentExampleUATMethod:
+          description: 'Deploy Automated Deployment Example UAT Method'
+          default: 'Update'
+          type: choice
+          options:
+            - Update
+            - Upgrade
 
-variables:
-  - group: alm-accelerator-variable-group
-  - name: solutionVersion
-    value: string
-  - name: solutionDisplayName
-    value: string
-    
-pool:
-  vmImage: 'windows-latest'
+
+#variables:
+ # - group: alm-accelerator-variable-group
+ # - name: solutionVersion
+ #   value: string
+ # - name: solutionDisplayName
+ #   value: string
+
+jobs:
+ Build:
+  runs-on: windows-latest
+  steps:  
 
 stages:
 - stage: Build
