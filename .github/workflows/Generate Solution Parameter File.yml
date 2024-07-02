@@ -43,7 +43,7 @@ jobs:
         - name: Export unmanaged version of solution 
           uses: microsoft/powerplatform-actions/export-solution@v1
           with:
-             environment-url: ${{ inputs.serviceConnectionUrl }}
+             environment-url: ${{ needs.export_vars.outputs.serviceConnectionUrl }}
              app-id: ${{ inputs.applicationId }} 
              client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
              tenant-id: ${{ secrets.TENANTID }}
