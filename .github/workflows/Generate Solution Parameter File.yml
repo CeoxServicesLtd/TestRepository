@@ -29,6 +29,7 @@ jobs:
   
   GenerateSolutionParameterFile:
     runs-on: windows-latest
+    uses: export_vars
     steps:  
         - name: powerplatform-actions             
           uses: microsoft/powerplatform-actions/actions-install@v1
