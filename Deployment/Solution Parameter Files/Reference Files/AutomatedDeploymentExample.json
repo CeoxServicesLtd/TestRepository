@@ -2,7 +2,19 @@
   "EnvironmentVariables": [
     {
       "SchemaName": "ceox_EnvironmentVariable",
-      "Value": ""
+      "Value": "",
+      "Name": {
+        "Default": "Environment Variable",
+        "ByLcid": {
+          "1033": "Environment Variable"
+        }
+      },
+      "Description": {
+        "Default": "Example",
+        "ByLcid": {
+          "1033": "Example"
+        }
+      }
     }
   ],
   "ConnectionReferences": [
