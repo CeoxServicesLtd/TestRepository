@@ -43,6 +43,7 @@ jobs:
   Refresh-Source-Control:
     runs-on: windows-latest
     needs: Refresh-Source-Control-Steps
+    if: always() && (needs.Refresh-Source-Control-Steps.result == 'skipped' || needs.Refresh-Source-Control-Steps.result == 'success') && Refresh-Source-Control-Steps == true
     steps:
       - uses: actions/checkout@v2
         with:
