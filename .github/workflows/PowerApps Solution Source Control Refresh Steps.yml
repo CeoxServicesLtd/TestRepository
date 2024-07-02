@@ -35,7 +35,9 @@ jobs:
         "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append      
 
     - name: Get the current date in UTC
-      run: echo "CURRENT_DATE=$(TZ=UTC date +'%Y%m%d')" >> $GITHUB_ENV
+      run: |
+        $env:TZ="UTC"
+        echo "CURRENT_DATE=$(Get-Date -Format 'yyyyMMdd')" | Out-File -FilePath $env:GITHUB_ENV -Append
 
     - name: Update solution version            
       uses: microsoft/powerplatform-actions/set-online-solution-version@v1
