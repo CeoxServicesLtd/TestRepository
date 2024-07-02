@@ -28,6 +28,12 @@ jobs:
     - name: powerplatform-actions             
       uses: microsoft/powerplatform-actions/actions-install@v1
 
+    - name: Add pac to PATH
+      shell: pwsh
+      run: |
+        $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
+        "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append      
+
     - name: Update solution version            
       uses: microsoft/powerplatform-actions/set-online-solution-version@v1
       with:
@@ -59,6 +65,24 @@ jobs:
          solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}_Managed.zip      
          managed: true
 
+    - name: Generate Comparison Parameter File
+      if:  ${{ inputs.checkParameterFile }} == true
+      shell: cmd
+      run: |
+        pac solution create-settings --solution-zip ".\${{ inputs.solutionName }}.zip" --settings-file "${{ runner.temp }}\${{ inputs.solutionName }}.json"
+
+    - name: Compare Parameter Files 
+      if:  ${{ inputs.checkParameterFile }} == true    
+      shell: pwsh
+      run: |      
+          $sourceFile = Get-Content -Path "${{ runner.temp }}\${{ inputs.solutionName }}.json"
+          $targetFile = Get-Content -Path ".\Deployment\Solution Parameter Files\Reference Files\${{ inputs.solutionName }}.json"
+          
+          if(Compare-Object $sourceFile $targetFile)
+          {
+            throw "Parameter files are different; confirm parameter files are up-to-date"
+          }
+  
  # - ${{ if eq(parameters.checkParameterFile, true) }}:
  #   - task: CmdLine@2
  #     displayName: "Generate Comparison Parameter File"
