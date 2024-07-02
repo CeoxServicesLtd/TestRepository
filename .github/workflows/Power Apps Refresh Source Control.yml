@@ -42,7 +42,7 @@ jobs:
 
   Refresh-Source-Control:
     runs-on: windows-latest
-    needs: Refresh-Source-Control-Steps
+    needs: [export_vars, Refresh-Source-Control-Steps]
     if: always() && (needs.Refresh-Source-Control-Steps.result == 'skipped' || needs.Refresh-Source-Control-Steps.result == 'success') && inputs.refreshConfigurationData == true
     steps:
       - uses: actions/checkout@v2
@@ -63,8 +63,8 @@ jobs:
         uses: microsoft/powerplatform-actions/export-data@v1
         if: inputs.refreshConfigurationData == true
         with:
-           environment-url: ${{ inputs.serviceConnectionUrl }}
-           app-id: ${{ inputs.applicationId }} 
+           environment-url: ${{ needs.export_vars.outputs.serviceConnectionUrl }}
+           app-id: ${{ needs.export_vars.outputs.applicationId }}
            client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
            tenant-id: ${{ secrets.TENANTID }}
            schema-file: '.\Deployment\Data\Automated Deployment Example Schema File.xml'
