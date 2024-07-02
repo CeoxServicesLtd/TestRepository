@@ -98,11 +98,3 @@ jobs:
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
         git push
 
-
-  # - task: PowerPlatformUnpackSolution@2
-#    displayName: "Unpack solution ${{ parameters.solutionName }}"
- #   inputs:
-  #    SolutionInputFile: '$(Build.ArtifactStagingDirectory)\${{ parameters.solutionName }}.zip'
-  #    SolutionTargetFolder: '$(Build.SourcesDirectory)\Solutions\${{ parameters.solutionName }}'
-   #   SolutionType: 'Both'
-
