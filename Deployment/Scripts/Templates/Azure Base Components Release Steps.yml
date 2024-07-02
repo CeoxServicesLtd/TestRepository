@@ -1,0 +1,37 @@
+parameters:
+
+- name: environment
+  type: string
+  default: ''
+  
+- name: resourcegroup
+  type: string
+  default: ''
+  
+  
+- name: subscriptionId
+  type: string
+  default: ''
+
+jobs:
+    - deployment: Deploy
+      displayName: 'Deploy to ${{ parameters.environment }}'
+      pool:
+        vmImage: 'windows-latest'
+      environment: '${{ parameters.environment }}'
+      strategy:
+        runOnce:
+            deploy:
+                steps:
+                - task: AzureResourceManagerTemplateDeployment@3
+                  inputs:
+                    deploymentScope: 'Resource Group'
+                    azureResourceManagerConnection: 'Azure-rg-chub-${{ parameters.resourcegroup }}-1'
+                    subscriptionId: '${{ parameters.subscriptionId }}'
+                    action: 'Create Or Update Resource Group'
+                    resourceGroupName: 'rg-chub-${{ parameters.resourcegroup }}-1'
+                    location: 'UK South'
+                    templateLocation: 'Linked artifact'
+                    csmFile: '$(Pipeline.Workspace)/AzureARMScripts/BaseComponents.json'
+                    csmParametersFile: '$(Pipeline.Workspace)/AzureARMScripts/BaseComponents.${{ parameters.resourcegroup }}.parameters.json'
+                    deploymentMode: 'Incremental'

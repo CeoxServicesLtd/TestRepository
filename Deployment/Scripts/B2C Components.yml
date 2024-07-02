@@ -1,0 +1,71 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build
+    steps:
+
+    - task: NuGetToolInstaller@1
+      inputs:
+        versionSpec: '5.8.0'
+        checkLatest: true
+
+    - task: NuGetCommand@2
+      inputs:
+        command: 'restore'
+        restoreSolution: 'AzureResources/AzureResources.sln'
+        feedsToUse: 'select'
+
+    - task: MSBuild@1
+      displayName: "Build B2C Function App"
+      inputs:
+        solution: 'AzureResources/AzureResources.sln'
+        msbuildArchitecture: 'x64'
+        configuration: 'Release'
+        msbuildArguments: '/p:DeployOnBuild=true /p:PublishProfile=FolderProfile /p:TransformWebConfigEnabled=false'
+
+    - task: ArchiveFiles@2
+      inputs:
+        rootFolderOrFile: 'AzureResources/NH.Chub.AzureB2C.AzureFunctions/bin/Release/net6.0'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/AzureB2CFunctionApp.zip'
+        replaceExistingArchive: true
+
+    - publish: "$(Build.ArtifactStagingDirectory)/AzureB2CFunctionApp.zip"
+      displayName: "Publish B2C Function App Files"
+      artifact: AzureB2CFunctionApp
+
+    - task: CopyFiles@2
+      displayName: 'Copy Specific Scripts'
+      inputs:
+        contents: '$(System.DefaultWorkingDirectory)\AzureResources\ARMDeploymentTemplates\B2CComponents*.json'
+        targetFolder: '$(Build.ArtifactStagingDirectory)\AzureARMScripts'
+        flattenFolders: true
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\AzureARMScripts'
+        ArtifactName: 'AzureARMScripts'
+        publishLocation: 'Container'
+
+
+- stage: SprintHotfixDev
+  displayName: "Deploy to Sprint Hotfix Dev"
+  jobs:
+    - template: Templates/B2C Components Release Steps.yml
+      parameters:
+        environment: 'sprinthotfixdev'
+        resourcegroup: 'SPRINTHOTFIXDEV'
+        subscriptionId: '2e2cc2ec-9c5d-46af-9c0b-5a3b1b766e39'

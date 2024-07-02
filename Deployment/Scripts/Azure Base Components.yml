@@ -1,0 +1,85 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+  - job: Build
+
+    steps:
+
+    - task: CopyFiles@2
+      displayName: 'Copy Specific Scripts'
+      inputs:
+        contents: '$(System.DefaultWorkingDirectory)\AzureResources\ARMDeploymentTemplates\BaseComponents*.json'
+        targetFolder: '$(Build.ArtifactStagingDirectory)\AzureARMScripts'
+        flattenFolders: true
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\AzureARMScripts'
+        ArtifactName: 'AzureARMScripts'
+        publishLocation: 'Container'
+  
+- stage: Dev
+  displayName: "Deploy to Dev"
+  jobs:
+    - template: Templates/Azure Base Components Release Steps.yml
+      parameters:
+        environment: 'DEV'
+        resourcegroup: 'dev'
+        subscriptionId: '2e2cc2ec-9c5d-46af-9c0b-5a3b1b766e39'
+
+- stage: SIT
+  displayName: "Deploy to SIT"
+  jobs:
+    - template: Templates/Azure Base Components Release Steps.yml
+      parameters:
+        environment: 'SIT'
+        resourcegroup: 'sit'
+        subscriptionId: '2e2cc2ec-9c5d-46af-9c0b-5a3b1b766e39'
+
+- stage: SprintHotFixDev
+  displayName: "Deploy to Sprint Hot Fix Dev"
+  jobs:
+    - template: Templates/Azure Base Components Release Steps.yml
+      parameters:
+        environment: 'Sprint Hot Fix Dev'
+        resourcegroup: 'sprinthotfixdev'
+        subscriptionId: '2e2cc2ec-9c5d-46af-9c0b-5a3b1b766e39'
+
+- stage: Training
+  displayName: "Deploy to Training"
+  jobs:
+    - template: Templates/Azure Base Components Release Steps.yml
+      parameters:
+        environment: 'Training'
+        resourcegroup: 'training'
+        subscriptionId: '2e2cc2ec-9c5d-46af-9c0b-5a3b1b766e39'
+
+#- stage: Prod
+#  displayName: "Deploy to Prod"
+#  jobs:
+#    - template: Templates/Azure Base Components Release Steps.yml
+#      parameters:
+#        environment: 'Prod'
+#        resourcegroup: 'prod'
+#        subscriptionId: '206bebf0-39bd-4a14-a394-f426cf0f34c8'
+
+- stage: ProdHotFixDev
+  displayName: "Deploy to Prod Hot Fix Dev"
+  jobs:
+    - template: Templates/Azure Base Components Release Steps.yml
+      parameters:
+        environment: 'Prod Hot Fix Dev'
+        resourcegroup: 'prodhotfixdev'
+        subscriptionId: '2e2cc2ec-9c5d-46af-9c0b-5a3b1b766e39'

@@ -1,0 +1,15 @@
+{
+  "EnvironmentVariables": [
+    {
+      "SchemaName": "ceox_EnvironmentVariable",
+      "Value": "Hello World"
+    }
+  ],
+  "ConnectionReferences": [
+    {
+      "LogicalName": "ceox_sharedcommondataserviceforapps_a355e",
+      "ConnectionId": "shared-commondataser-8e3e3196-b97a-4212-bf63-44929a051c62",
+      "ConnectorId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+# Unpack and Refresh Source Control
+trigger: none
+
+parameters:
+- name: sourceConnectionName
+  displayName: 'Source Environment'
+  default: Power Platform Dev
+  values:
+  - Power Platform Dev
+- name: refreshConfigurationData
+  displayName: 'Refresh Configuration Data?'
+  type: boolean
+  default: false
+- name: exportAutomatedDeploymentExample
+  displayName: 'Refresh Automated Deployment Example Into Source Control?'
+  type: boolean
+  default: false
+- name: exportAutomatedDeploymentExample2
+  displayName: 'Refresh Automated Deployment Example 2 Into Source Control?'
+  type: boolean
+  default: false
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  - name: serviceConnectionUrl
+    ${{ if eq(parameters['sourceConnectionName'], 'Power Platform Dev') }}: 
+      value: 'https://pembasedev.crm11.dynamics.com'
+
+steps:
+  - task: PowerPlatformToolInstaller@2
+    displayName: "Install Power Platform Tools"
+    inputs:
+      DefaultVersion: true
+
+  - task: PowerPlatformSetConnectionVariables@2
+    name: ConnectionVariables  
+    displayName: "Get Connection Details for PP Connection"
+    inputs:
+      authenticationType: 'PowerPlatformSPN'
+      PowerPlatformSPN: '${{ parameters.sourceConnectionName }}'
+
+  - task: PowerShell@2
+    displayName: 'Set Pac.Exe path' 
+    inputs:
+      targetType: 'inline'
+      script: |
+        $pacExePath = $env:POWERPLATFORMTOOLS_PACCLIPATH + "\pac\tools\pac.exe"  
+        echo "##vso[task.setvariable variable=PACEXEPATH]$pacExePath"
+        
+  - task: PowerShell@2
+    displayName: 'PAC Auth'
+    inputs:
+      targetType: 'inline'
+      script: |
+        $pacCommand = "auth create --url $(serviceConnectionUrl) --applicationId $(ConnectionVariables.BuildTools.ApplicationId) --clientSecret $(ConnectionVariables.BuildTools.ClientSecret) --tenant $(ConnectionVariables.BuildTools.TenantId)"
+        Write-Host "Pac command - $(PACEXEPATH) $pacCommand"
+        Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
+
+  - ${{ if eq(parameters.exportAutomatedDeploymentExample, true) }}:
+    - template: Templates/PowerApps Solution Source Control Refresh Steps.yml
+      parameters:
+        solutionName: 'AutomatedDeploymentExample'
+        checkParameterFile: false
+        sourceConnectionName: ${{ parameters.sourceConnectionName }}
+
+  - ${{ if eq(parameters.exportAutomatedDeploymentExample2, true) }}:
+    - template: Templates/PowerApps Solution Source Control Refresh Steps.yml
+      parameters:
+        solutionName: 'AutomatedDeploymentExample2'
+        checkParameterFile: true
+        sourceConnectionName: ${{ parameters.sourceConnectionName }}
+
+  - ${{ if eq(parameters.refreshConfigurationData, true) }}:
+    - task: PowerPlatformExportData@2
+      displayName: 'Export Configuration Data' 
+      inputs:
+        authenticationType: 'PowerPlatformSPN'
+        PowerPlatformSPN: ${{ parameters.sourceConnectionName }}
+        SchemaFile: '$(Build.SourcesDirectory)\Deployment\Data\Automated Deployment Example Schema File.xml'
+        DataFile: '$(Build.SourcesDirectory)\Deployment\Data\Automated Deployment Example Data.zip'
+        Overwrite: true
+      
+    
+  - task: CmdLine@2
+    displayName: "Commit changes to source control"
+    inputs:
+      script: |
+        echo commit all changes
+        git config user.email "$(Build.QueuedById)"
+        git config user.name "$(Build.QueuedBy)"
+        git checkout -b "$(Build.SourceBranchName)"
+        git add --all
+        git commit -m "solution init"
+        echo push code to new repo
+        git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)" push origin $(Build.SourceBranchName)
