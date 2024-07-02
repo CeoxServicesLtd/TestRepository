@@ -1,0 +1,62 @@
+name: Generate Solution Parameter File
+
+on:
+  workflow_dispatch:
+    inputs:
+      sourceConnectionName:
+        description: 'Source Environment'
+        default: 'Power Platform Dev'
+        type: choice
+        options:
+          - Power Platform Dev
+      solutionName:
+        description: 'Solution Name'
+        default: 'AutomatedDeploymentExample'
+        type: choice
+        options:
+          - AutomatedDeploymentExample
+          - AutomatedDeploymentExample2
+
+jobs:
+
+  export_vars:
+    name: Export Variables to Output
+    runs-on: ubuntu-latest
+    outputs:
+      serviceConnectionUrl: "${{ (inputs.sourceConnectionName == 'Power Platform Dev') && 'https://pembasedev.crm11.dynamics.com' || '' }}"
+    steps:
+      - run: echo "Exporting variables to outputs."
+  
+  GenerateSolutionParameterFile:
+    runs-on: windows-latest
+    steps:  
+        - name: powerplatform-actions             
+          uses: microsoft/powerplatform-actions/actions-install@v1
+
+        - name: Add pac to PATH
+          shell: pwsh
+          run: |
+            $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
+            "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append     
+        
+        - name: Export unmanaged version of solution 
+          uses: microsoft/powerplatform-actions/export-solution@v1
+          with:
+             environment-url: ${{ inputs.serviceConnectionUrl }}
+             app-id: ${{ inputs.applicationId }} 
+             client-secret: ${{ secrets.DEVAPPLICATIONSECRET }}
+             tenant-id: ${{ secrets.TENANTID }}
+             solution-name: ${{ inputs.solutionName }}
+             solution-output-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
+    
+        - name: Generate Comparison Parameter File
+          shell: cmd
+          run: |
+            pac solution create-settings --solution-zip "${{ runner.temp }}\${{ inputs.solutionName }}.zip" --settings-file "${{ runner.temp }}\${{ inputs.solutionName }}.json"
+
+        - name: Archive production artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: dist-without-markdown
+            path: |
+              ${{ runner.temp }}\${{ inputs.solutionName }}.json
