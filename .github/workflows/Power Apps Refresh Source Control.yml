@@ -35,7 +35,7 @@ jobs:
     needs: export_vars
     with:
       solutionName: AutomatedDeploymentExample
-      checkParameterFile: false
+      checkParameterFile: true
       serviceConnectionUrl: ${{ needs.export_vars.outputs.serviceConnectionUrl }}
       applicationId:  ${{ needs.export_vars.outputs.applicationId }}
     secrets: inherit
