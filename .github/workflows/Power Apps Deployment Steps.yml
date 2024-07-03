@@ -12,12 +12,12 @@ on:
       appId:
         required: true
         type: string       
-      clientSecret:
-        required: true
-        type: string          
-      tenantId:
-        required: true
-        type: string           
+#      clientSecret:
+#        required: true
+#        type: string          
+#      tenantId:
+#        required: true
+ #       type: string           
       deployAutomatedDeploymentExample:
         description: 'Deploy Automated Example?'
         type: boolean
@@ -50,8 +50,8 @@ jobs:
         with:
            environment-url: ${{ inputs.serviceConnectionUrl }}
            app-id: ${{ inputs.appId }}
-           client-secret: ${{ inputs.clientSecret }}
-           tenant-id: ${{ inputs.tenantId }}
+           client-secret: ${{ secrets.clientSecret }}
+           tenant-id: ${{ secrets.tenantId }}
            import-as-holding: ${{ inputs.deployAutomatedDeploymentExampleMethod }} == "Upgrade"
 
 
