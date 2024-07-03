@@ -169,8 +169,8 @@ jobs:
           Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.Xrm.Data.PowerShell" -ModuleVersion $xrmDataPowerShellVersion -SubPath "da"
           Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.PowerApps.Administration.PowerShell" -ModuleVersion $powerAppsAdminModuleVersion -SubPath "pa"
           
-          echo ::set-output name=PowerAppsAdminModuleVersion::$($powerAppsAdminModuleVersion)
-          echo ::set-output name=XrmDataPowerShellVersion::$($xrmDataPowerShellVersion)
+          echo "PowerAppsAdminModuleVersion=$powerAppsAdminModuleVersion" >> $env:GITHUB_OUTPUT
+          echo "XrmDataPowerShellVersion=$xrmDataPowerShellVersion" >> $env:GITHUB_OUTPUT
 
       - name: Activate Flows
         shell: pwsh 
