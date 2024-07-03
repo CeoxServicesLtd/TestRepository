@@ -75,7 +75,7 @@ jobs:
                     
             foreach ($item in $data){
             
-                $pacCommand = "org update-settings --name " + $item.name + ' --value '
+                $pacCommand = "org update-settings --name " + $item.name + " --value "
             
                 switch($item.type)
                 {
