@@ -101,7 +101,7 @@ jobs:
      deployAutomatedDeploymentExample: ${{ inputs.deployAutomatedDeploymentExample }}
      deployAutomatedDeploymentExampleMethod: ${{ inputs.deployAutomatedDeploymentExampleUATMethod }}
      deployConfigurationData: ${{ inputs.deployConfigurationData }}
-     updateOrganizationSettings: ${{ inputs.updateOrganizationSettings }}
+     updateOrganizationSettings: ${{ inputs.updateOrganisationSettings }}
    secrets: 
      clientSecret: ${{ secrets.DEVAPPLICATIONSECRET }}
      tenantId: ${{ secrets.TENANTID  }}
