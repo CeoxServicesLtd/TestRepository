@@ -104,6 +104,7 @@ jobs:
      deployAutomatedDeploymentExampleMethod: inputs.deployAutomatedDeploymentExampleUATMethod
      deployConfigurationData: inputs.deployConfigurationData
      updateOrganizationSettings: inputs.updateOrganizationSettings
+   secrets: inherit
    
 #- stage: UAT
 #  displayName: "Deploy To UAT"
