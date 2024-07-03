@@ -167,8 +167,8 @@ jobs:
     
           New-Item ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ItemType Directory -Force | Out-Null
       
-          Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.Xrm.Data.PowerShell" -ModuleVersion $xrmDataPowerShellVersion -SubPath "da"
-          Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.PowerApps.Administration.PowerShell" -ModuleVersion $powerAppsAdminModuleVersion -SubPath "pa"
+          Install-PowerShellModule -ModuleName "Microsoft.Xrm.Data.PowerShell" -ModuleVersion $xrmDataPowerShellVersion 
+          Install-PowerShellModule -ModuleName "Microsoft.PowerApps.Administration.PowerShell" -ModuleVersion $powerAppsAdminModuleVersion
           
           echo "PowerAppsAdminModuleVersion=$powerAppsAdminModuleVersion" >> $env:GITHUB_OUTPUT
           echo "XrmDataPowerShellVersion=$xrmDataPowerShellVersion" >> $env:GITHUB_OUTPUT
@@ -179,7 +179,7 @@ jobs:
           # load PowerShell files into memory
           . ".\PipelineUtils\activate-flows.ps1"
           try {
-              Invoke-ActivateFlows '----DataverseConnectionString------' '${{ inputs.serviceConnectionUrl }}' '${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }}\da\Microsoft.Xrm.Data.PowerShell' '${{ steps.installPowerShellModules.outputs.XrmDataPowerShellVersion }}' '${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }}\pa\Microsoft.PowerApps.Administration.PowerShell' '${{ steps.installPowerShellModules.outputs.PowerAppsAdminModuleVersion }}' '${{ secrets.tenantId }}' '${{ inputs.appId }}' '${{ secrets.clientSecret }}' 'AutomatedDeploymentExample' '---EnvironmentId---' '' '' '.\FlowActivation\Flow Activation Order.json' "$env:MAPPED_SPN_Token"
+              Invoke-ActivateFlows '----DataverseConnectionString------' '${{ inputs.serviceConnectionUrl }}' 'Microsoft.Xrm.Data.PowerShell' '${{ steps.installPowerShellModules.outputs.XrmDataPowerShellVersion }}' 'Microsoft.PowerApps.Administration.PowerShell' '${{ steps.installPowerShellModules.outputs.PowerAppsAdminModuleVersion }}' '${{ secrets.tenantId }}' '${{ inputs.appId }}' '${{ secrets.clientSecret }}' 'AutomatedDeploymentExample' '---EnvironmentId---' '' '' '.\FlowActivation\Flow Activation Order.json' "$env:MAPPED_SPN_Token"
           } catch {
               Write-Host "Errors occurred while activating flows. Please review the log for specific errors and verify your deployment configuration settings."
               Write-Host $_
