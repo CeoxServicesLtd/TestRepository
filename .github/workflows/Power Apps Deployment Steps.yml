@@ -67,12 +67,37 @@ jobs:
          data-file: .\Data\Automated Deployment Example Data.zip
 
 
- #           - ${{ if eq(parameters.deployConfigurationData, true) }}:
- #             - task: PowerPlatformImportData@2
- #               inputs:
- #                 authenticationType: 'PowerPlatformSPN'
- #                 PowerPlatformSPN: '${{ parameters.powerPlatformServiceConnectionName }}'
- #                 DataFile: '$(Pipeline.Workspace)/Deployment Data/Automated Deployment Example Data.zip'
+      - name: Update Organization Settings
+        shell: pwsh
+        if: inputs.updateOrganisationSettings == true        
+        run: |
+            $data = Get-content ".\OrganisationSettingsFiles\OrganisationSettings.${{ inputs.environment }}.json" | out-string | ConvertFrom-Json
+                    
+            foreach ($item in $data){
+            
+                $pacCommand = "org update-settings --name " + $item.name + ' --value '
+            
+                switch($item.type)
+                {
+                    "string"
+                    { 
+                        $pacCommand = $pacCommand + "`"" + $item.value + "`""
+                        break
+                    }
+                    "bool"
+                    { 
+                        $pacCommand = $pacCommand + $item.value.ToString().ToLower()
+                        break
+                    }
+                    default 
+                    { 
+                        $pacCommand = $pacCommand + $item.value 
+                    }
+                }
+            
+                Write-Host "command - $(PACEXEPATH) " $pacCommand
+            
+                Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
 
       
  #           - ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:
