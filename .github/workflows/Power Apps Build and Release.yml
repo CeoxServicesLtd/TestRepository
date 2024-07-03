@@ -89,35 +89,7 @@ jobs:
       with:
         name: OrganisationSettingsFiles
         path: |
-          .\Deployment\Organisation Settings Files\*.json           
-          
-
-   # - task: CopyFiles@2
-    #  displayName: 'Copy Pipeline Utility Files' 
-    #  inputs:
-     #   SourceFolder: '$(Build.SourcesDirectory)\Deployment\PowerShell'
-    #    TargetFolder: '$(Build.ArtifactStagingDirectory)\PipelineUtils\PowerShell'
-
-   # - task: PublishBuildArtifacts@1
-    #  displayName: "Publish PipelineUtils"
-    #  inputs:
-     #   PathtoPublish: '$(Build.ArtifactStagingDirectory)/PipelineUtils'
-     #   ArtifactName: 'PipelineUtils'
-    #    publishLocation: 'Container'
-  
-
-    #- ${{ if ne(parameters.deployAutomatedDeploymentExample2, 'No') }}:
-     # - task: CopyFiles@2
-      #  displayName: 'Copy Flow Activation Order File' 
-      #  inputs:
-      #    SourceFolder: '$(Build.SourcesDirectory)\Deployment\Flow Activation'
-      #    TargetFolder: '$(Build.ArtifactStagingDirectory)\Flow Activation'
-      #- task: PublishBuildArtifacts@1
-      #  displayName: "Publish Flow Activation Files"
-     #   inputs:
-    #      PathtoPublish: '$(Build.ArtifactStagingDirectory)/Flow Activation'
-   #       ArtifactName: 'Flow Activation'
-  #        publishLocation: 'Container'                   
+          .\Deployment\Organisation Settings Files\*.json                     
 
 #- stage: UAT
 #  displayName: "Deploy To UAT"
