@@ -44,28 +44,36 @@ jobs:
 
     - name: Pack Solution
       uses: microsoft/powerplatform-actions/pack-solution@v1
+      if: inputs.deployAutomatedDeploymentExample == true
       with:
          solution-folder: .\Solutions\AutomatedDeploymentExample
          solution-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
          solution-type: Both
 
+    - name: Publish Data Files
+      uses: actions/upload-artifact@v4
+      if: inputs.deployConfigurationData == true
+      with:
+        name: Data
+        path: |
+          .\Deployment\Data\*.zip
 
-   # - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
-    #  - task: PowerPlatformPackSolution@2
-     #   displayName: 'Pack AutomatedDeploymentExample2' 
-      #  inputs:
-      #    SolutionSourceFolder: '$(Build.SourcesDirectory)\Solutions\AutomatedDeploymentExample'
-     #     SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\Solutions\AutomatedDeploymentExample.zip'
-    #      SolutionType: 'Both'
+    - name: Publish Solution Parameter Files
+      uses: actions/upload-artifact@v4
+      if: inputs.deployAutomatedDeploymentExample == true
+      with:
+        name: SolutionParameterFiles
+        path: |
+          .\Deployment\Solution Parameter Files\*.json    
 
-   # - ${{ if ne(parameters.deployAutomatedDeploymentExample2, 'No') }}:
-     # - task: PowerPlatformPackSolution@2
-     #   displayName: 'Pack AutomatedDeploymentExample2' 
-     #   inputs:
-     #     SolutionSourceFolder: '$(Build.SourcesDirectory)\Solutions\AutomatedDeploymentExample2'
-     #     SolutionOutputFile: '$(Build.ArtifactStagingDirectory)\Solutions\AutomatedDeploymentExample2.zip'
-     #     SolutionType: 'Both'
-
+    - name: Publish Organisation Settings Files
+      uses: actions/upload-artifact@v4
+      if: inputs.deployAutomatedDeploymentExample == true
+      with:
+        name: OrganisationSettingsFiles
+        path: |
+          .\Deployment\Organisation Settings Files\*.json           
+          
     #- ${{ if eq(parameters.deployConfigurationData, true) }}:
     #  - task: CopyFiles@2
     #    displayName: 'Copy data files' 
