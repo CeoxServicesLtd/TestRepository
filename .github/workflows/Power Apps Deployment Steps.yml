@@ -169,8 +169,8 @@ jobs:
           Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.Xrm.Data.PowerShell" -ModuleVersion $xrmDataPowerShellVersion -SubPath "da"
           Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.PowerApps.Administration.PowerShell" -ModuleVersion $powerAppsAdminModuleVersion -SubPath "pa"
           
-          echo ::set-output name=PowerAppsAdminModuleVersion::$( $powerAppsAdminModuleVersion)
-          echo ::set-output name=XrmDataPowerShellVersion::$( $xrmDataPowerShellVersion)
+          echo ::set-output name=PowerAppsAdminModuleVersion::$($powerAppsAdminModuleVersion)
+          echo ::set-output name=XrmDataPowerShellVersion::$($xrmDataPowerShellVersion)
 
       - name: Activate Flows
         shell: pwsh 
@@ -178,7 +178,7 @@ jobs:
           # load PowerShell files into memory
           . ".\PipelineUtils\activate-flows.ps1"
           try {
-              Invoke-ActivateFlows 'DataverseConnectionString' 'parameters.serviceConnection' '' '' '' '' '' '' '' '' '' '' '' '' ""
+              Invoke-ActivateFlows '----DataverseConnectionString------' '${{ inputs.serviceConnectionUrl }}' '$(CoETools_Microsoft_Xrm_Data_PowerShell)' '${{ steps.setPowerShellPaths.outputs.XrmDataPowerShellVersion }}' '$(CoETools_Microsoft_PowerApps_Administration_PowerShell)' '${{ steps.setPowerShellPaths.outputs.PowerAppsAdminModuleVersion }}' '${{ secrets.tenantId }}' '${{ inputs.appId }}' '${{ secrets.clientSecret }}' 'AutomatedDeploymentExample' '---EnvironmentId---' '' '' '.\FlowActivation\Flow Activation Order.json' "$env:MAPPED_SPN_Token"
           } catch {
               Write-Host "##vso[task.logissue type=warning]Errors occurred while activating flows. Please review the log for specific errors and verify your deployment configuration settings."
               Write-Host $_
