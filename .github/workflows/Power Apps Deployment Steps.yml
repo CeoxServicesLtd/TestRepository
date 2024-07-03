@@ -1,158 +1,157 @@
-parameters:
-- name: environment
-  type: string
-  default: 'UAT'
-- name: serviceConnectionUrl
-  type: string
-  default: ''
-- name: powerPlatformServiceConnectionName
-  type: string
-  default: ''    
-- name: deployAutomatedDeploymentExample
-  default: No
-  values:
-  - No
-  - Yes
-- name: deployAutomatedDeploymentExampleMethodVariableName
-  type: string
-  default: 'Update'
-- name: deployAutomatedDeploymentExample2
-  default: No
-  values:
-  - No
-  - Yes
-- name: deployAutomatedDeploymentExample2MethodVariableName
-  type: string
-  default: 'Update'
-- name: deployConfigurationData
-  displayName: 'Deploy Configuration Data?'
-  type: boolean
-  default: false
-- name: updateOrganizationSettings
-  default: No
-  values:
-  - No
-  - Yes  
+name: Power Apps Deployment Steps.yml
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      serviceConnectionUrl:
+        required: true
+        type: string
+      deployAutomatedDeploymentExample:
+        description: 'Deploy Automated Example?'
+        type: boolean
+        default: false
+      deployAutomatedDeploymentExampleMethod:
+          description: 'Deploy Automated Deployment Example UAT Method'
+          type: string      
+      deployConfigurationData:
+        description: 'Deploy Configuration Data?'
+        type: boolean
+        default: false            
+      updateOrganizationSettings:
+        description: 'Update Organization Settings?'
+        type: boolean
+        default: false          
 
 jobs:
-  - deployment: ${{ parameters.environment }}
-    displayName: 'Deploy to ${{ parameters.environment }}'
-    pool:  
-      vmImage: 'windows-latest'
-    environment: '${{ parameters.environment }}'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
+ Deploy-to-${{ parameters.environment }}:
+    runs-on: windows-latest
+    steps:
+    
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
+        
+# jobs:
+ # - deployment: ${{ parameters.environment }}
+  #  displayName: 'Deploy to ${{ parameters.environment }}'
+  #  pool:  
+  #    vmImage: 'windows-latest'
+  #  environment: '${{ parameters.environment }}'
+  #  strategy:
+  #    runOnce:
+  #      deploy:
+  #        steps:
 
-            - task: PowerPlatformToolInstaller@2
-              inputs:
-                DefaultVersion: true
-            - template: CoE Accelerator/set-service-connection-url.yml
-              parameters:
-                serviceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
-                serviceConnectionUrl: '${{ parameters.serviceConnectionUrl }}'
+  #          - task: PowerPlatformToolInstaller@2
+  #            inputs:
+  #              DefaultVersion: true
+  #          - template: CoE Accelerator/set-service-connection-url.yml
+  #            parameters:
+  #              serviceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
+  #              serviceConnectionUrl: '${{ parameters.serviceConnectionUrl }}'
 
-            - task: PowerPlatformSetConnectionVariables@2
-              name: connectionVariables
-              displayName: "Get Connection Details for PP Connection"
-              inputs:
-                authenticationType: 'PowerPlatformSPN'
-                PowerPlatformSPN: '${{ parameters.powerPlatformServiceConnectionName }}'
+  #          - task: PowerPlatformSetConnectionVariables@2
+  #            name: connectionVariables
+  #            displayName: "Get Connection Details for PP Connection"
+  #            inputs:
+  #              authenticationType: 'PowerPlatformSPN'
+  #              PowerPlatformSPN: '${{ parameters.powerPlatformServiceConnectionName }}'
 
-            - template: CoE Accelerator/set-tools-paths.yml
+ #           - template: CoE Accelerator/set-tools-paths.yml
 
-            - template: CoE Accelerator/set-spn-token.yml
-              parameters:
-                serviceConnection: "${{ parameters.serviceConnectionUrl }}"
-                tenantId: $(connectionVariables.BuildTools.TenantId)
-                clientId: $(connectionVariables.BuildTools.ApplicationId)
-                clientSecret: $(connectionVariables.BuildTools.ClientSecret)
+ #           - template: CoE Accelerator/set-spn-token.yml
+ #             parameters:
+ #               serviceConnection: "${{ parameters.serviceConnectionUrl }}"
+ #               tenantId: $(connectionVariables.BuildTools.TenantId)
+#                clientId: $(connectionVariables.BuildTools.ApplicationId)
+#                clientSecret: $(connectionVariables.BuildTools.ClientSecret)
                 
-            - template: CoE Accelerator/install-powershell-modules.yml
+#            - template: CoE Accelerator/install-powershell-modules.yml
 
-            - task: PowerShell@2
-              displayName: 'Set Pac.Exe path' 
-              inputs:
-                targetType: 'inline'
-                script: |
-                  $pacExePath = $env:POWERPLATFORMTOOLS_PACCLIPATH + "\pac\tools\pac.exe"  
-                  echo "##vso[task.setvariable variable=PACEXEPATH]$pacExePath"
+#            - task: PowerShell@2
+#              displayName: 'Set Pac.Exe path' 
+#              inputs:
+#                targetType: 'inline'
+#                script: |
+#                  $pacExePath = $env:POWERPLATFORMTOOLS_PACCLIPATH + "\pac\tools\pac.exe"  
+#                  echo "##vso[task.setvariable variable=PACEXEPATH]$pacExePath"
 
-            - task: PowerShell@2
-              displayName: 'PAC Auth'
-              inputs:
-                targetType: 'inline'
-                script: |
-                  $pacCommand = "auth create --url ${{ parameters.serviceConnectionUrl }} --applicationId $(connectionVariables.BuildTools.ApplicationId) --clientSecret $(connectionVariables.BuildTools.ClientSecret) --tenant $(connectionVariables.BuildTools.TenantId)"
-                  Write-Host "Pac command - $(PACEXEPATH) $pacCommand"
-                  Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"                
+#            - task: PowerShell@2
+#              displayName: 'PAC Auth'
+#              inputs:
+#                targetType: 'inline'
+#                script: |
+#                  $pacCommand = "auth create --url ${{ parameters.serviceConnectionUrl }} --applicationId $(connectionVariables.BuildTools.ApplicationId) --clientSecret $(connectionVariables.BuildTools.ClientSecret) --tenant $(connectionVariables.BuildTools.TenantId)"
+#                  Write-Host "Pac command - $(PACEXEPATH) $pacCommand"
+#                  Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"                
 
-            - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
-              - template: Power Apps Deploy Solution.yml
-                parameters:
-                  powerPlatformServiceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
-                  solutionName: 'AutomatedDeploymentExample'
-                  solutionParameterFileName: 'AutomatedDeploymentExample.${{ parameters.environment }}.json'
-                  useSolutionParameterFile: true
-                  deploymentTypeVariableName: '${{ parameters.deployAutomatedDeploymentExampleMethodVariableName }}'
+ #           - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
+ #             - template: Power Apps Deploy Solution.yml
+ #               parameters:
+ #                 powerPlatformServiceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
+ #                 solutionName: 'AutomatedDeploymentExample'
+ #                 solutionParameterFileName: 'AutomatedDeploymentExample.${{ parameters.environment }}.json'
+ #                 useSolutionParameterFile: true
+ #                 deploymentTypeVariableName: '${{ parameters.deployAutomatedDeploymentExampleMethodVariableName }}'
 
-            - ${{ if ne(parameters.deployAutomatedDeploymentExample2, 'No') }}:
-              - template: Power Apps Deploy Solution.yml
-                parameters:
-                  powerPlatformServiceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
-                  solutionName: 'AutomatedDeploymentExample2'
-                  solutionParameterFileName: 'AutomatedDeploymentExample2.${{ parameters.environment }}.json'
-                  useSolutionParameterFile: true
-                  deploymentTypeVariableName: '${{ parameters.deployAutomatedDeploymentExample2MethodVariableName }}'
+ #           - ${{ if ne(parameters.deployAutomatedDeploymentExample2, 'No') }}:
+ #             - template: Power Apps Deploy Solution.yml
+ #               parameters:
+ #                 powerPlatformServiceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
+ #                 solutionName: 'AutomatedDeploymentExample2'
+ #                 solutionParameterFileName: 'AutomatedDeploymentExample2.${{ parameters.environment }}.json'
+ #                 useSolutionParameterFile: true
+ #                 deploymentTypeVariableName: '${{ parameters.deployAutomatedDeploymentExample2MethodVariableName }}'
 
 
-              - template: CoE Accelerator/activate-flows.yml
-                parameters:
-                  solutionName: 'AutomatedDeploymentExample2'
-                  serviceConnection: '${{ parameters.serviceConnectionUrl }}'
-                  solutionComponentOwnershipConfiguration: ''
-                  connectionReferences: ''
-                  activateFlowConfiguration: '$(Pipeline.Workspace)\Flow Activation\Flow Activation Order.json'
+ #             - template: CoE Accelerator/activate-flows.yml
+ #               parameters:
+ #                 solutionName: 'AutomatedDeploymentExample2'
+ #                 serviceConnection: '${{ parameters.serviceConnectionUrl }}'
+ #                 solutionComponentOwnershipConfiguration: ''
+ #                 connectionReferences: ''
+ #                 activateFlowConfiguration: '$(Pipeline.Workspace)\Flow Activation\Flow Activation Order.json'
 
-            - ${{ if eq(parameters.deployConfigurationData, true) }}:
-              - task: PowerPlatformImportData@2
-                inputs:
-                  authenticationType: 'PowerPlatformSPN'
-                  PowerPlatformSPN: '${{ parameters.powerPlatformServiceConnectionName }}'
-                  DataFile: '$(Pipeline.Workspace)/Deployment Data/Automated Deployment Example Data.zip'
+ #           - ${{ if eq(parameters.deployConfigurationData, true) }}:
+ #             - task: PowerPlatformImportData@2
+ #               inputs:
+ #                 authenticationType: 'PowerPlatformSPN'
+ #                 PowerPlatformSPN: '${{ parameters.powerPlatformServiceConnectionName }}'
+ #                 DataFile: '$(Pipeline.Workspace)/Deployment Data/Automated Deployment Example Data.zip'
 
       
-            - ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:
-              - task: PowerShell@2
-                displayName: 'PAC Set Settings'
-                inputs:
-                  targetType: 'inline'
-                  script: |
-                    $data = Get-content "$(Pipeline.Workspace)\OrganisationSettingsFiles\OrganisationSettings.${{ parameters.environment }}.json" | out-string | ConvertFrom-Json
-                    
-                    foreach ($item in $data){
-                    
-                        $pacCommand = "org update-settings --name " + $item.name + ' --value '
-                    
-                        switch($item.type)
-                        {
-                            "string"
-                            { 
-                                $pacCommand = $pacCommand + "`"" + $item.value + "`""
-                                break
-                            }
-                            "bool"
-                            { 
-                                $pacCommand = $pacCommand + $item.value.ToString().ToLower()
-                                break
-                            }
-                            default 
-                            { 
-                                $pacCommand = $pacCommand + $item.value 
-                            }
-                        }
-                    
+ #           - ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:
+#              - task: PowerShell@2
+#                displayName: 'PAC Set Settings'
+#                inputs:
+#                  targetType: 'inline'
+#                  script: |
+#                    $data = Get-content "$(Pipeline.Workspace)\OrganisationSettingsFiles\OrganisationSettings.${{ parameters.environment }}.json" | out-string | ConvertFrom-Json
+#                    
+#                    foreach ($item in $data){
+#                    
+#                        $pacCommand = "org update-settings --name " + $item.name + ' --value '
+#                    
+#                        switch($item.type)
+#                        {
+#                            "string"
+#                            { 
+#                                $pacCommand = $pacCommand + "`"" + $item.value + "`""
+#                                break
+#                            }
+#                            "bool"
+#                            { 
+#                                $pacCommand = $pacCommand + $item.value.ToString().ToLower()
+#                                break
+#                            }
+#                            default 
+#                            { 
+#                                $pacCommand = $pacCommand + $item.value 
+#                            }
+#                        }
+#                    
                         Write-Host "command - $(PACEXEPATH) " $pacCommand
                     
                         Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
