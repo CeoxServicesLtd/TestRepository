@@ -53,6 +53,7 @@ jobs:
            tenant-id: ${{ secrets.tenantId }}
            stage-and-upgrade: ${{ inputs.deployAutomatedDeploymentExampleMethod }} == "Upgrade"
            solution-file: .\Solutions\AutomatedDeploymentExample_Managed.zip
+           use-deployment-settings-file: true
            deployment-settings-file: .\SolutionParameterFiles\AutomatedDeploymentExample.${{inputs.environment}}.json
 
 
