@@ -11,13 +11,7 @@ on:
         type: string
       appId:
         required: true
-        type: string       
-#      clientSecret:
-#        required: true
-#        type: string          
-#      tenantId:
-#        required: true
- #       type: string           
+        type: string                 
       deployAutomatedDeploymentExample:
         description: 'Deploy Automated Example?'
         type: boolean
@@ -32,7 +26,12 @@ on:
       updateOrganizationSettings:
         description: 'Update Organization Settings?'
         type: boolean
-        default: false          
+        default: false     
+    secrets:
+      clientSecret:
+        required: true   
+      tenantId:
+        required: true
 
 jobs:
  Deploy:
