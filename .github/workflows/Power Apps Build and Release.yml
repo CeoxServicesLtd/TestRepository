@@ -85,12 +85,24 @@ jobs:
 
     - name: Publish Organisation Settings Files
       uses: actions/upload-artifact@v4
-      if: inputs.deployAutomatedDeploymentExample == true
+      if: inputs.updateOrganizationSettings == true
       with:
         name: OrganisationSettingsFiles
         path: |
           .\Deployment\Organisation Settings Files\*.json                     
 
+ Deploy-To-UAT:
+   uses: ./.github/workflows/PowerApps Deployment Steps.yml
+   needs: Build
+   with:
+     environment: "UAT"
+     serviceConnectionUrl: "https://pemprodev.crm11.dynamics.com/"
+     deployAutomatedDeploymentExample: inputs.deployAutomatedDeploymentExample
+     deployAutomatedDeploymentExampleMethod: inputs.deployAutomatedDeploymentExampleUATMethod
+     deployConfigurationData: inputs.deployConfigurationData
+     updateOrganizationSettings: inputs.updateOrganizationSettings
+   secrets: inherit
+   
 #- stage: UAT
 #  displayName: "Deploy To UAT"
 #  jobs:
