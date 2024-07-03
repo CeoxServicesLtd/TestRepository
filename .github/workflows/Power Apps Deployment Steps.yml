@@ -51,7 +51,7 @@ jobs:
            app-id: ${{ inputs.appId }}
            client-secret: ${{ secrets.clientSecret }}
            tenant-id: ${{ secrets.tenantId }}
-           import-as-holding: ${{ inputs.deployAutomatedDeploymentExampleMethod }} == "Upgrade"
+           stage-and-upgrade: ${{ inputs.deployAutomatedDeploymentExampleMethod }} == "Upgrade"
            solution-file: .\AutomatedDeploymentExample.zip
            deployment-settings-file: .\AutomatedDeploymentExample.${{inputs.environment}}.json
 
