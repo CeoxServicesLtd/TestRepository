@@ -100,8 +100,8 @@ jobs:
      appId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
      deployAutomatedDeploymentExample: ${{ inputs.deployAutomatedDeploymentExample }}
      deployAutomatedDeploymentExampleMethod: ${{ inputs.deployAutomatedDeploymentExampleUATMethod }}
-     deployConfigurationData: inputs.deployConfigurationData
-     updateOrganizationSettings: inputs.updateOrganizationSettings
+     deployConfigurationData: ${{ inputs.deployConfigurationData }}
+     updateOrganizationSettings: ${{ inputs.updateOrganizationSettings }}
    secrets: 
      clientSecret: ${{ secrets.DEVAPPLICATIONSECRET }}
      tenantId: ${{ secrets.TENANTID  }}
