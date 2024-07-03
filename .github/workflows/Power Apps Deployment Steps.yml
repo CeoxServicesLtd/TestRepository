@@ -52,8 +52,8 @@ jobs:
            client-secret: ${{ secrets.clientSecret }}
            tenant-id: ${{ secrets.tenantId }}
            stage-and-upgrade: ${{ inputs.deployAutomatedDeploymentExampleMethod }} == "Upgrade"
-           solution-file: .\AutomatedDeploymentExample.zip
-           deployment-settings-file: .\AutomatedDeploymentExample.${{inputs.environment}}.json
+           solution-file: .\Solutions\AutomatedDeploymentExample_Managed.zip
+           deployment-settings-file: .\Solutions\AutomatedDeploymentExample.${{inputs.environment}}.json
 
 
  #           - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
