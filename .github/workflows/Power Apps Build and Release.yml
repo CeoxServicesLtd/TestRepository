@@ -95,7 +95,7 @@ jobs:
    uses: ./.github/workflows/Power Apps Deployment Steps.yml
    needs: Build
    with:
-     environment: "UAT"
+     environment: UAT
      serviceConnectionUrl: "https://pemprodev.crm11.dynamics.com/"
      appId: "3492d4d1-7c22-4928-891b-2d8a449546cb"
      deployAutomatedDeploymentExample: ${{ inputs.deployAutomatedDeploymentExample }}
