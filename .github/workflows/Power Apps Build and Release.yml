@@ -50,13 +50,14 @@ jobs:
          solution-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
          solution-type: Both
 
-    - name: Publish Data Files
+    - name: Publish Solutions
       uses: actions/upload-artifact@v4
-      if: inputs.deployConfigurationData == true
+      if: inputs.deployAutomatedDeploymentExample == true
       with:
-        name: Data
+        name: Solutions
         path: |
-          .\Deployment\Data\*.zip
+          ${{ runner.temp }}\${{ inputs.solutionName }}.zip
+          ${{ runner.temp }}\${{ inputs.solutionName }}_Managed.zip
 
     - name: Publish Solution Parameter Files
       uses: actions/upload-artifact@v4
@@ -66,6 +67,22 @@ jobs:
         path: |
           .\Deployment\Solution Parameter Files\*.json    
 
+    - name: Publish Flow Activation Files
+      uses: actions/upload-artifact@v4
+      if: inputs.deployAutomatedDeploymentExample == true
+      with:
+        name: Flow Activation
+        path: |
+          .\Deployment\Flow Activation 
+
+    - name: Publish Data Files
+      uses: actions/upload-artifact@v4
+      if: inputs.deployConfigurationData == true
+      with:
+        name: Data
+        path: |
+          .\Deployment\Data\*.zip
+
     - name: Publish Organisation Settings Files
       uses: actions/upload-artifact@v4
       if: inputs.deployAutomatedDeploymentExample == true
@@ -74,30 +91,6 @@ jobs:
         path: |
           .\Deployment\Organisation Settings Files\*.json           
           
-    #- ${{ if eq(parameters.deployConfigurationData, true) }}:
-    #  - task: CopyFiles@2
-    #    displayName: 'Copy data files' 
-    #    inputs:
-    #      SourceFolder: '$(Build.SourcesDirectory)\Deployment\Data'
-    #      Contents: 'Automated Deployment Example Data.zip'
-    #      TargetFolder: '$(Build.ArtifactStagingDirectory)\Data'
-
-   # - ${{ if or(ne(parameters.deployAutomatedDeploymentExample, 'No'), ne(parameters.deployAutomatedDeploymentExample2, 'No')) }}:
-    #  - task: CopyFiles@2
-    #    displayName: 'Copy solution parameter files' 
-     #   inputs:
-      #    SourceFolder: '$(Build.SourcesDirectory)\Deployment\Solution Parameter Files'
-     #     Contents: '*.json'
-    #      TargetFolder: '$(Build.ArtifactStagingDirectory)\SolutionParameterFiles'
-
-
-   # - ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:
-    #  - task: CopyFiles@2
-    #    displayName: 'Copy Organization Setting Files' 
-    #    inputs:
-    #      SourceFolder: '$(Build.SourcesDirectory)\Deployment\Organisation Settings Files'
-    #      Contents: '*.json'
-    #      TargetFolder: '$(Build.ArtifactStagingDirectory)\OrganisationSettingsFiles'          
 
    # - task: CopyFiles@2
     #  displayName: 'Copy Pipeline Utility Files' 
@@ -111,38 +104,7 @@ jobs:
      #   PathtoPublish: '$(Build.ArtifactStagingDirectory)/PipelineUtils'
      #   ArtifactName: 'PipelineUtils'
     #    publishLocation: 'Container'
-
-   # - ${{ if eq(parameters.deployConfigurationData, true) }}:
-     # - task: PublishBuildArtifacts@1
-      #  displayName: "Publish Data"
-       # inputs:
-       #   PathtoPublish: '$(Build.ArtifactStagingDirectory)/Data'
-      #    ArtifactName: 'Data'
-     #     publishLocation: 'Container' 
-
-    #- ${{ if or(ne(parameters.deployAutomatedDeploymentExample, 'No'), ne(parameters.deployAutomatedDeploymentExample2, 'No')) }}:
-     # - task: PublishBuildArtifacts@1
-      #  displayName: "Publish Solutions"
-      #  inputs:
-      #    PathtoPublish: '$(Build.ArtifactStagingDirectory)/Solutions'
-      #    ArtifactName: 'Solutions'
-     #     publishLocation: 'Container'         
-
-    #- ${{ if or(ne(parameters.deployAutomatedDeploymentExample, 'No'), ne(parameters.deployAutomatedDeploymentExample2, 'No')) }}:
-     # - task: PublishBuildArtifacts@1
-       # displayName: "Publish Solution Parameter Files"
-       # inputs:
-        #  PathtoPublish: '$(Build.ArtifactStagingDirectory)/SolutionParameterFiles'
-        #  ArtifactName: 'SolutionParameterFiles'
-        #  publishLocation: 'Container'              
-
-    #- ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:     
-      #- task: PublishBuildArtifacts@1
-        #displayName: "Publish Organisation Settings Files"
-        #inputs:
-          #PathtoPublish: '$(Build.ArtifactStagingDirectory)/OrganisationSettingsFiles'
-          #ArtifactName: 'OrganisationSettingsFiles'
-          #publishLocation: 'Container'            
+  
 
     #- ${{ if ne(parameters.deployAutomatedDeploymentExample2, 'No') }}:
      # - task: CopyFiles@2
