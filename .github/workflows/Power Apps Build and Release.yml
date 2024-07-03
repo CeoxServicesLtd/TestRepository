@@ -78,9 +78,9 @@ jobs:
       uses: actions/upload-artifact@v4
       if: inputs.deployAutomatedDeploymentExample == true
       with:
-        name: Flow Activation
+        name: FlowActivation
         path: |
-          .\Deployment\Flow Activation 
+          .\Deployment\FlowActivation 
 
     - name: Publish Data Files
       uses: actions/upload-artifact@v4
