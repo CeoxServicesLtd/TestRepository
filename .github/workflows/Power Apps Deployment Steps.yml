@@ -125,6 +125,7 @@ jobs:
           echo "powerPlatformToolsPath=$powerPlatformToolsPath" >> $env:GITHUB_OUTPUT
   
       - name: Install PowerShell Modules
+        id: installPowerShellModules
         shell: pwsh
         run: |
           $xrmDataPowerShellVersion = "2.8.14"
@@ -178,9 +179,9 @@ jobs:
           # load PowerShell files into memory
           . ".\PipelineUtils\activate-flows.ps1"
           try {
-              Invoke-ActivateFlows '----DataverseConnectionString------' '${{ inputs.serviceConnectionUrl }}' '$(CoETools_Microsoft_Xrm_Data_PowerShell)' '${{ steps.setPowerShellPaths.outputs.XrmDataPowerShellVersion }}' '$(CoETools_Microsoft_PowerApps_Administration_PowerShell)' '${{ steps.setPowerShellPaths.outputs.PowerAppsAdminModuleVersion }}' '${{ secrets.tenantId }}' '${{ inputs.appId }}' '${{ secrets.clientSecret }}' 'AutomatedDeploymentExample' '---EnvironmentId---' '' '' '.\FlowActivation\Flow Activation Order.json' "$env:MAPPED_SPN_Token"
+              Invoke-ActivateFlows '----DataverseConnectionString------' '${{ inputs.serviceConnectionUrl }}' '$(CoETools_Microsoft_Xrm_Data_PowerShell)' '${{ steps.installPowerShellModules.outputs.XrmDataPowerShellVersion }}' '$(CoETools_Microsoft_PowerApps_Administration_PowerShell)' '${{ steps.installPowerShellModules.outputs.PowerAppsAdminModuleVersion }}' '${{ secrets.tenantId }}' '${{ inputs.appId }}' '${{ secrets.clientSecret }}' 'AutomatedDeploymentExample' '---EnvironmentId---' '' '' '.\FlowActivation\Flow Activation Order.json' "$env:MAPPED_SPN_Token"
           } catch {
-              Write-Host "##vso[task.logissue type=warning]Errors occurred while activating flows. Please review the log for specific errors and verify your deployment configuration settings."
+              Write-Host "Errors occurred while activating flows. Please review the log for specific errors and verify your deployment configuration settings."
               Write-Host $_
               exit 1;
           }
