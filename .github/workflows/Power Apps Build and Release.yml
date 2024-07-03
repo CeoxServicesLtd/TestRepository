@@ -50,6 +50,13 @@ jobs:
          solution-file: ${{ runner.temp }}\AutomatedDeploymentExample.zip
          solution-type: Both
 
+    - name: Publish PowerShell Scripts
+      uses: actions/upload-artifact@v4
+      with:
+        name: PipelineUtils
+        path: |
+          .\Deployment\PowerShell\*.ps1
+
     - name: Publish Solutions
       uses: actions/upload-artifact@v4
       if: inputs.deployAutomatedDeploymentExample == true
