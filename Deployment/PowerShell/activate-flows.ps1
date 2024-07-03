@@ -28,10 +28,12 @@ function Invoke-ActivateFlows {
 
     Write-Host "Importing PowerShell Module: $microsoftXrmDataPowerShellModule - $xrmDataPowerShellVersion"
     Import-Module $microsoftXrmDataPowerShellModule -Force -RequiredVersion $xrmDataPowerShellVersion -ArgumentList @{ NonInteractive = $true }
-
+	
+    Write-Host "Modules Loaded"
+    
     $conn = Get-CrmConnection -ConnectionString "$dataverseConnectionString"
 
-    . "$env:POWERSHELLPATH/dataverse-webapi-functions.ps1"
+    . ".\dataverse-webapi-functions.ps1"
     $dataverseHost = Get-HostFromUrl "$serviceConnection"
     Write-Host "dataverseHost - $dataverseHost"
 
