@@ -92,7 +92,7 @@ jobs:
           .\Deployment\Organisation Settings Files\*.json                     
 
  Deploy-To-UAT:
-   uses: ./.github/workflows/PowerApps Deployment Steps.yml
+   uses: ./.github/workflows/Power Apps Deployment Steps.yml
    needs: Build
    with:
      environment: "UAT"
