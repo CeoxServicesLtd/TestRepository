@@ -1,4 +1,4 @@
-name: Generate Solution Parameter File
+name: Power Apps Build and Release
 
 on:
   workflow_dispatch:
