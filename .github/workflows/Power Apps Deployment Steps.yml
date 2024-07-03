@@ -9,6 +9,15 @@ on:
       serviceConnectionUrl:
         required: true
         type: string
+      appId:
+        required: true
+        type: string       
+      clientSecret:
+        required: true
+        type: string          
+      tenantId:
+        required: true
+        type: string           
       deployAutomatedDeploymentExample:
         description: 'Deploy Automated Example?'
         type: boolean
@@ -26,27 +35,81 @@ on:
         default: false          
 
 jobs:
- Deploy-to-${{ parameters.environment }}:
+ Deploy:
     runs-on: windows-latest
     steps:
-    
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
-        
-# jobs:
- # - deployment: ${{ parameters.environment }}
-  #  displayName: 'Deploy to ${{ parameters.environment }}'
-  #  pool:  
-  #    vmImage: 'windows-latest'
-  #  environment: '${{ parameters.environment }}'
-  #  strategy:
-  #    runOnce:
-  #      deploy:
-  #        steps:
 
-  #          - task: PowerPlatformToolInstaller@2
-  #            inputs:
-  #              DefaultVersion: true
+      - name: powerplatform-actions             
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Import Solution
+        uses: microsoft/powerplatform-actions/import-solution@v1
+        if: inputs.deployAutomatedDeploymentExample == true
+        with:
+           environment-url: ${{ inputs.serviceConnectionUrl }}
+           app-id: ${{ inputs.appId }}
+           client-secret: ${{ inputs.clientSecret }}
+           tenant-id: ${{ inputs.tenantId }}
+
+
+ #           - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
+ #             - template: Power Apps Deploy Solution.yml
+ #               parameters:
+ #                 powerPlatformServiceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
+ #                 solutionName: 'AutomatedDeploymentExample'
+ #                 solutionParameterFileName: 'AutomatedDeploymentExample.${{ parameters.environment }}.json'
+ #                 useSolutionParameterFile: true
+ #                 deploymentTypeVariableName: '${{ parameters.deployAutomatedDeploymentExampleMethodVariableName }}'
+
+
+ #           - ${{ if eq(parameters.deployConfigurationData, true) }}:
+ #             - task: PowerPlatformImportData@2
+ #               inputs:
+ #                 authenticationType: 'PowerPlatformSPN'
+ #                 PowerPlatformSPN: '${{ parameters.powerPlatformServiceConnectionName }}'
+ #                 DataFile: '$(Pipeline.Workspace)/Deployment Data/Automated Deployment Example Data.zip'
+
+      
+ #           - ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:
+#              - task: PowerShell@2
+#                displayName: 'PAC Set Settings'
+#                inputs:
+#                  targetType: 'inline'
+#                  script: |
+#                    $data = Get-content "$(Pipeline.Workspace)\OrganisationSettingsFiles\OrganisationSettings.${{ parameters.environment }}.json" | out-string | ConvertFrom-Json
+#                    
+#                    foreach ($item in $data){
+#                    
+#                        $pacCommand = "org update-settings --name " + $item.name + ' --value '
+#                    
+#                        switch($item.type)
+#                        {
+#                            "string"
+#                            { 
+#                                $pacCommand = $pacCommand + "`"" + $item.value + "`""
+#                                break
+#                            }
+#                            "bool"
+#                            { 
+#                                $pacCommand = $pacCommand + $item.value.ToString().ToLower()
+#                                break
+#                            }
+#                            default 
+#                            { 
+#                                $pacCommand = $pacCommand + $item.value 
+#                            }
+#                        }
+#                    
+        #                Write-Host "command - $(PACEXEPATH) " $pacCommand
+                    
+        #                Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
+   #                 }
+
+
+
+
   #          - template: CoE Accelerator/set-service-connection-url.yml
   #            parameters:
   #              serviceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
@@ -87,23 +150,7 @@ jobs:
 #                  Write-Host "Pac command - $(PACEXEPATH) $pacCommand"
 #                  Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"                
 
- #           - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
- #             - template: Power Apps Deploy Solution.yml
- #               parameters:
- #                 powerPlatformServiceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
- #                 solutionName: 'AutomatedDeploymentExample'
- #                 solutionParameterFileName: 'AutomatedDeploymentExample.${{ parameters.environment }}.json'
- #                 useSolutionParameterFile: true
- #                 deploymentTypeVariableName: '${{ parameters.deployAutomatedDeploymentExampleMethodVariableName }}'
 
- #           - ${{ if ne(parameters.deployAutomatedDeploymentExample2, 'No') }}:
- #             - template: Power Apps Deploy Solution.yml
- #               parameters:
- #                 powerPlatformServiceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
- #                 solutionName: 'AutomatedDeploymentExample2'
- #                 solutionParameterFileName: 'AutomatedDeploymentExample2.${{ parameters.environment }}.json'
- #                 useSolutionParameterFile: true
- #                 deploymentTypeVariableName: '${{ parameters.deployAutomatedDeploymentExample2MethodVariableName }}'
 
 
  #             - template: CoE Accelerator/activate-flows.yml
@@ -113,46 +160,3 @@ jobs:
  #                 solutionComponentOwnershipConfiguration: ''
  #                 connectionReferences: ''
  #                 activateFlowConfiguration: '$(Pipeline.Workspace)\Flow Activation\Flow Activation Order.json'
-
- #           - ${{ if eq(parameters.deployConfigurationData, true) }}:
- #             - task: PowerPlatformImportData@2
- #               inputs:
- #                 authenticationType: 'PowerPlatformSPN'
- #                 PowerPlatformSPN: '${{ parameters.powerPlatformServiceConnectionName }}'
- #                 DataFile: '$(Pipeline.Workspace)/Deployment Data/Automated Deployment Example Data.zip'
-
-      
- #           - ${{ if ne(parameters.updateOrganizationSettings, 'No') }}:
-#              - task: PowerShell@2
-#                displayName: 'PAC Set Settings'
-#                inputs:
-#                  targetType: 'inline'
-#                  script: |
-#                    $data = Get-content "$(Pipeline.Workspace)\OrganisationSettingsFiles\OrganisationSettings.${{ parameters.environment }}.json" | out-string | ConvertFrom-Json
-#                    
-#                    foreach ($item in $data){
-#                    
-#                        $pacCommand = "org update-settings --name " + $item.name + ' --value '
-#                    
-#                        switch($item.type)
-#                        {
-#                            "string"
-#                            { 
-#                                $pacCommand = $pacCommand + "`"" + $item.value + "`""
-#                                break
-#                            }
-#                            "bool"
-#                            { 
-#                                $pacCommand = $pacCommand + $item.value.ToString().ToLower()
-#                                break
-#                            }
-#                            default 
-#                            { 
-#                                $pacCommand = $pacCommand + $item.value 
-#                            }
-#                        }
-#                    
-                        Write-Host "command - $(PACEXEPATH) " $pacCommand
-                    
-                        Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
-                    }
