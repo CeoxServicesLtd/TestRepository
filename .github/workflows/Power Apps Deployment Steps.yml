@@ -105,6 +105,8 @@ jobs:
             
                 Invoke-Expression -Command "$pacCommand"
 
+            }
+
   #          - template: CoE Accelerator/set-service-connection-url.yml
   #            parameters:
   #              serviceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
