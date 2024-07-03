@@ -73,6 +73,14 @@ jobs:
           $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
           "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append   
 
+      - name: PAC AUTH
+        shell: pwsh
+        if: inputs.updateOrganisationSettings == true 
+        run: |
+              $pacCommand = "pac auth create --url ${{ inputs.serviceConnectionUrl }} --applicationId {{ inputs.appId }} --clientSecret {{ secrets.clientSecret }}  --tenant {{ secrets.tenantId }} "
+              Invoke-Expression -Command "$pacCommand"  
+
+
       - name: Update Organisation Settings
         shell: pwsh
         if: inputs.updateOrganisationSettings == true        
