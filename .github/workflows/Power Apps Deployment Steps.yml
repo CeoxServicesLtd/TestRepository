@@ -164,10 +164,10 @@ jobs:
             Write-Host "##vso[task.setvariable variable=CoETools_$($ModuleName.Replace('.','_'))]$modulePath"
           }
     
-          New-Item ${{ env.powerPlatformToolsPath }} -ItemType Directory -Force | Out-Null
+          New-Item ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ItemType Directory -Force | Out-Null
       
-          Install-PowerShellModule -RootPath ${{ env.powerPlatformToolsPath }} -ModuleName "Microsoft.Xrm.Data.PowerShell" -ModuleVersion $xrmDataPowerShellVersion -SubPath "da"
-          Install-PowerShellModule -RootPath ${{ env.powerPlatformToolsPath }} -ModuleName "Microsoft.PowerApps.Administration.PowerShell" -ModuleVersion $powerAppsAdminModuleVersion -SubPath "pa"
+          Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.Xrm.Data.PowerShell" -ModuleVersion $xrmDataPowerShellVersion -SubPath "da"
+          Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.PowerApps.Administration.PowerShell" -ModuleVersion $powerAppsAdminModuleVersion -SubPath "pa"
           
           echo ::set-output name=PowerAppsAdminModuleVersion::$( $powerAppsAdminModuleVersion)
           echo ::set-output name=XrmDataPowerShellVersion::$( $xrmDataPowerShellVersion)
