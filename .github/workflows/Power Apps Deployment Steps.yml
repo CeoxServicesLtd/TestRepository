@@ -56,15 +56,15 @@ jobs:
            use-deployment-settings-file: true
            deployment-settings-file: .\SolutionParameterFiles\AutomatedDeploymentExample.${{inputs.environment}}.json
 
-
- #           - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
- #             - template: Power Apps Deploy Solution.yml
- #               parameters:
- #                 powerPlatformServiceConnectionName: '${{ parameters.powerPlatformServiceConnectionName }}'
- #                 solutionName: 'AutomatedDeploymentExample'
- #                 solutionParameterFileName: 'AutomatedDeploymentExample.${{ parameters.environment }}.json'
- #                 useSolutionParameterFile: true
- #                 deploymentTypeVariableName: '${{ parameters.deployAutomatedDeploymentExampleMethodVariableName }}'
+      - name: Import Data
+        uses: microsoft/powerplatform-actions/import-data@v1
+        if: inputs.deployConfigurationData == true
+        with:
+         environment-url: ${{ inputs.serviceConnectionUrl }}
+         app-id: ${{ inputs.appId }}
+         client-secret: ${{ secrets.clientSecret }}
+         tenant-id: ${{ secrets.tenantId }}
+         data-file: .\Data\Automated Deployment Example Data.zip
 
 
  #           - ${{ if eq(parameters.deployConfigurationData, true) }}:
@@ -152,9 +152,6 @@ jobs:
 #                  $pacCommand = "auth create --url ${{ parameters.serviceConnectionUrl }} --applicationId $(connectionVariables.BuildTools.ApplicationId) --clientSecret $(connectionVariables.BuildTools.ClientSecret) --tenant $(connectionVariables.BuildTools.TenantId)"
 #                  Write-Host "Pac command - $(PACEXEPATH) $pacCommand"
 #                  Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"                
-
-
-
 
  #             - template: CoE Accelerator/activate-flows.yml
  #               parameters:
