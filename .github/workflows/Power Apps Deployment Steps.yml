@@ -52,6 +52,7 @@ jobs:
            app-id: ${{ inputs.appId }}
            client-secret: ${{ inputs.clientSecret }}
            tenant-id: ${{ inputs.tenantId }}
+           import-as-holding: ${{ inputs.deployAutomatedDeploymentExampleMethod }} == "Upgrade"
 
 
  #           - ${{ if ne(parameters.deployAutomatedDeploymentExample, 'No') }}:
