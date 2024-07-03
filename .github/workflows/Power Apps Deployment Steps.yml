@@ -77,9 +77,7 @@ jobs:
         shell: pwsh
         if: inputs.updateOrganisationSettings == true 
         run: |
-              $pacCommand = "pac auth create --url ${{ inputs.serviceConnectionUrl }} --applicationId {{ inputs.appId }} --clientSecret {{ secrets.clientSecret }}  --tenant {{ secrets.tenantId }} "
-              Invoke-Expression -Command "$pacCommand"  
-
+              pac auth create --url ${{ inputs.serviceConnectionUrl }} --applicationId {{ inputs.appId }} --clientSecret {{ secrets.clientSecret }}  --tenant {{ secrets.tenantId }}
 
       - name: Update Organisation Settings
         shell: pwsh
