@@ -11,8 +11,8 @@ on:
         description: 'Deploy  Automated Example?'
         type: boolean
         default: false
-      updateOrganizationSettings:
-        description: 'Update Organization Settings?'
+      updateOrganisationSettings:
+        description: 'Update Organisation Settings?'
         type: boolean
         default: false        
       deployAutomatedDeploymentExampleUATMethod:
@@ -85,7 +85,7 @@ jobs:
 
     - name: Publish Organisation Settings Files
       uses: actions/upload-artifact@v4
-      if: inputs.updateOrganizationSettings == true
+      if: inputs.updateOrganisationSettings == true
       with:
         name: OrganisationSettingsFiles
         path: |
