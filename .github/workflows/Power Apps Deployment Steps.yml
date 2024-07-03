@@ -66,6 +66,12 @@ jobs:
          tenant-id: ${{ secrets.tenantId }}
          data-file: .\Data\Automated Deployment Example Data.zip
 
+      - name: Add pac to PATH
+        shell: pwsh
+        if: inputs.updateOrganisationSettings == true 
+        run: |
+          $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
+          "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append   
 
       - name: Update Organisation Settings
         shell: pwsh
@@ -73,31 +79,31 @@ jobs:
         run: |
             $data = Get-content ".\OrganisationSettingsFiles\OrganisationSettings.${{ inputs.environment }}.json" | out-string | ConvertFrom-Json
                     
-#            foreach ($item in $data){
+            foreach ($item in $data){
             
-#                $pacCommand = "org update-settings --name " + $item.name + " --value "
-#            
- #               switch($item.type)
-  #              {
-   #                 "string"
-      #              { 
-    #                    $pacCommand = $pacCommand + "`"" + $item.value + "`""
-     #                   break
-      #              }
-      #              "bool"
-      ##              { 
-       #                 $pacCommand = $pacCommand + $item.value.ToString().ToLower()
-      #                  break
-      #              }
-       #             default 
-       #             { 
-       #                 $pacCommand = $pacCommand + $item.value 
-       #             }
-      #          }
+                $pacCommand = "pac org update-settings --name " + $item.name + " --value "
             
-       #         Write-Host "command - $(PACEXEPATH) " $pacCommand
+                switch($item.type)
+                {
+                    "string"
+                    { 
+                        $pacCommand = $pacCommand + "`"" + $item.value + "`""
+                        break
+                    }
+                    "bool"
+                    { 
+                        $pacCommand = $pacCommand + $item.value.ToString().ToLower()
+                        break
+                    }
+                    default 
+                    { 
+                        $pacCommand = $pacCommand + $item.value 
+                    }
+                }
             
-        #        Invoke-Expression -Command "$(PACEXEPATH) $pacCommand"
+                Write-Host "command - " $pacCommand
+            
+                Invoke-Expression -Command "$pacCommand"
 
   #          - template: CoE Accelerator/set-service-connection-url.yml
   #            parameters:
