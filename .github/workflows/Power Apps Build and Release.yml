@@ -47,7 +47,7 @@ jobs:
       if: inputs.deployAutomatedDeploymentExample == true
       with:
          solution-folder: .\Solutions\AutomatedDeploymentExample
-         solution-file: ${{ runner.temp }}\${{ inputs.solutionName }}.zip
+         solution-file: ${{ runner.temp }}\AutomatedDeploymentExample.zip
          solution-type: Both
 
     - name: Publish Solutions
@@ -56,8 +56,8 @@ jobs:
       with:
         name: Solutions
         path: |
-          ${{ runner.temp }}\${{ inputs.solutionName }}.zip
-          ${{ runner.temp }}\${{ inputs.solutionName }}_Managed.zip
+          ${{ runner.temp }}\AutomatedDeploymentExample.zip
+          ${{ runner.temp }}\AutomatedDeploymentExample_Managed.zip
 
     - name: Publish Solution Parameter Files
       uses: actions/upload-artifact@v4
