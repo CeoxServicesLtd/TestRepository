@@ -167,8 +167,8 @@ jobs:
     
           New-Item ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ItemType Directory -Force | Out-Null
       
-          Install-Module -Name "Microsoft.Xrm.Data.PowerShell" -RequiredVersion  $xrmDataPowerShellVersion -Force 
-          Install-Module -Name "Microsoft.PowerApps.Administration.PowerShell" -RequiredVersion  $powerAppsAdminModuleVersion -Force
+          Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.Xrm.Data.PowerShell" -ModuleVersion $xrmDataPowerShellVersion -SubPath "da"
+          Install-PowerShellModule -RootPath ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ModuleName "Microsoft.PowerApps.Administration.PowerShell" -ModuleVersion $powerAppsAdminModuleVersion -SubPath "pa"          
           
           echo "PowerAppsAdminModuleVersion=$powerAppsAdminModuleVersion" >> $env:GITHUB_OUTPUT
           echo "XrmDataPowerShellVersion=$xrmDataPowerShellVersion" >> $env:GITHUB_OUTPUT
