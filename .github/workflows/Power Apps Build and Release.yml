@@ -76,7 +76,7 @@ jobs:
 
     - name: Publish Flow Activation Files
       uses: actions/upload-artifact@v4
-      if: inputs.deployAutomatedDeploymentExample == true
+#      if: inputs.deployAutomatedDeploymentExample == true
       with:
         name: FlowActivation
         path: |
