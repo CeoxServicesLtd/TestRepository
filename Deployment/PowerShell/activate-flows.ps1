@@ -33,7 +33,7 @@ function Invoke-ActivateFlows {
     
     $conn = Get-CrmConnection -ConnectionString "$dataverseConnectionString"
 
-    . ".\dataverse-webapi-functions.ps1"
+    . ".\PipelineUtils\dataverse-webapi-functions.ps1"
     $dataverseHost = Get-HostFromUrl "$serviceConnection"
     Write-Host "dataverseHost - $dataverseHost"
 
