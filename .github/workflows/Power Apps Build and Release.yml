@@ -23,14 +23,6 @@ on:
             - Update
             - Upgrade
 
-
-#variables:
- # - group: alm-accelerator-variable-group
- # - name: solutionVersion
- #   value: string
- # - name: solutionDisplayName
- #   value: string
-
 jobs:
  Build:
   runs-on: windows-latest
@@ -76,7 +68,7 @@ jobs:
 
     - name: Publish Flow Activation Files
       uses: actions/upload-artifact@v4
-#      if: inputs.deployAutomatedDeploymentExample == true
+      if: inputs.deployAutomatedDeploymentExample == true
       with:
         name: FlowActivation
         path: |
@@ -112,18 +104,3 @@ jobs:
    secrets: 
      clientSecret: ${{ secrets.DEVAPPLICATIONSECRET }}
      tenantId: ${{ secrets.TENANTID  }}
-   
-#- stage: UAT
-#  displayName: "Deploy To UAT"
-#  jobs:
-#      - template: Templates/Power Apps Deployment Steps.yml
-#        parameters:
-#          environment: 'UAT'
-#          serviceConnectionUrl: 'https://pemprodev.crm11.dynamics.com/' 
-#          powerPlatformServiceConnectionName: 'Power Platform UAT'
-#          deployAutomatedDeploymentExample: ${{parameters.deployAutomatedDeploymentExample}}
- #         deployAutomatedDeploymentExample2: ${{parameters.deployAutomatedDeploymentExample2}}
- #         deployConfigurationData: ${{parameters.deployConfigurationData}}
- #         updateOrganizationSettings: ${{parameters.updateOrganizationSettings}}
-#          deployAutomatedDeploymentExampleMethodVariableName: 'UAT_AutomatedDeploymentExample'
-#          deployAutomatedDeploymentExample2MethodVariableName: 'UAT_AutomatedDeploymentExample2'
