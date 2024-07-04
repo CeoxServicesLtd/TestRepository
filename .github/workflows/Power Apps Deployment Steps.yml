@@ -68,20 +68,20 @@ jobs:
          data-file: .\Data\Automated Deployment Example Data.zip
 
       - name: Add pac to PATH
-        shell: pwsh
+        shell: powershell
         if: inputs.updateOrganisationSettings == true 
         run: |
           $pac = (Get-Item "$env:POWERPLATFORMTOOLS_PACPATH").Directory.FullName;
           "$pac" | Out-File -FilePath $env:GITHUB_PATH -Append   
 
       - name: PAC AUTH
-        shell: pwsh
+        shell: powershell
         if: inputs.updateOrganisationSettings == true 
         run: |
               pac auth create --url ${{ inputs.serviceConnectionUrl }} --applicationId ${{ inputs.appId }} --clientSecret ${{ secrets.clientSecret }}  --tenant ${{ secrets.tenantId }}
 
       - name: Update Organisation Settings
-        shell: pwsh
+        shell: powershell
         if: inputs.updateOrganisationSettings == true        
         run: |
             $data = Get-content ".\OrganisationSettingsFiles\OrganisationSettings.${{ inputs.environment }}.json" | out-string | ConvertFrom-Json
@@ -116,7 +116,7 @@ jobs:
             
       - name: Set PowerShell Paths
         id: setPowerShellPaths
-        shell: pwsh
+        shell: powershell
         run: |
           $toolsPath = Get-Location
           $powerPlatformToolsSubPath = "_coe\ALM_ACC"
@@ -126,7 +126,7 @@ jobs:
   
       - name: Install PowerShell Modules
         id: installPowerShellModules
-        shell: pwsh
+        shell: powershell
         run: |
           $xrmDataPowerShellVersion = "2.8.14"
           $powerAppsAdminModuleVersion = "2.0.148"
@@ -176,7 +176,7 @@ jobs:
           echo "XrmDataPowerShellVersion=$xrmDataPowerShellVersion" >> $env:GITHUB_OUTPUT
 
       - name: Activate Flows
-        shell: pwsh 
+        shell: powershell 
         run: |
           # load PowerShell files into memory
           . ".\PipelineUtils\activate-flows.ps1"
