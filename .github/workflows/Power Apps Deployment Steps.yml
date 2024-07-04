@@ -163,6 +163,8 @@ jobs:
             # Set pipeline variable to be used in subsequent tasks when importing module
             $modulePath = Join-Path ([IO.Path]::GetDirectoryName($($fixedModulePath))) $ModuleName
             echo "CoETools_$($ModuleName.Replace('.','_'))=$modulePath" >> $env:GITHUB_OUTPUT
+            Write-Verbose "CoETools_$($ModuleName.Replace('.','_'))"
+            Write-Verbose "$modulePath"
           }
     
           New-Item ${{ steps.setPowerShellPaths.outputs.powerPlatformToolsPath }} -ItemType Directory -Force | Out-Null
